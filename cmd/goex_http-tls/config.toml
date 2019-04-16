@@ -1,0 +1,6 @@
+debug = true
+
+# You can use `mkcert` to generate a *locally trusted* TLS key/cert pair for testing.
+# https://github.com/FiloSottile/mkcert
+cert = "example.com.pem"
+key = "example.com-key.pem"
