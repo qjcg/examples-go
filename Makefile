@@ -1,12 +1,12 @@
 SHELL := bash
 
 outdir := ./out
-bin_prefix := goex_
+bin_prefix := goex-
 
 # FIXME: CGO_ENABLED=1 needed for sqlite example, this will hang!
 .PHONY: all
 all:
-	GCO_ENABLED=0 go build -o $(outdir)/ ./cmd/...
+	go build -o $(outdir)/ ./cmd/...
 
 .PHONY: install
 install:
