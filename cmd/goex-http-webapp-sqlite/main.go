@@ -8,7 +8,7 @@ import (
 	"net/http"
 
 	"github.com/jmoiron/sqlx"
-	_ "github.com/mattn/go-sqlite3"
+	_ "modernc.org/sqlite"
 )
 
 // Visits represents the number of visits to an HTTP endpoint.
@@ -28,7 +28,7 @@ func main() {
 	dbFile := flag.String("f", "example.db?_journal_mode=wal", "sqlite DB file")
 	flag.Parse()
 
-	db := sqlx.MustConnect("sqlite3", *dbFile)
+	db := sqlx.MustConnect("sqlite", *dbFile)
 	defer db.Close()
 
 	db.MustExec(schema)
