@@ -1,7 +1,10 @@
-version: 1
-packages:
-  - path: "tutorial"
-    name: "tutorial"
-    engine: "postgresql"
-    schema: "schema.sql"
-    queries: "query.sql"
+version: 2
+sql:
+  - engine: sqlite
+    schema: schema.sql
+    queries: query.sql
+    gen:
+      go:
+        package: tutorial
+        out: tutorial
+
