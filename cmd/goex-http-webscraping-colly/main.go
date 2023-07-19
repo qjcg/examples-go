@@ -4,6 +4,8 @@ package main
 
 import (
 	"fmt"
+	"io"
+	"os"
 	"regexp"
 
 	"github.com/gocolly/colly/v2"
@@ -11,17 +13,21 @@ import (
 
 const RedditURL = `https://old.reddit.com/r/ThingsCutInHalfPorn/`
 
-var REValidURL *regexp.Regexp = regexp.MustCompile("imgur")
+var REImgurURL *regexp.Regexp = regexp.MustCompile("imgur")
 
-func main() {
-	c := colly.NewCollector()
-
+func PrintThumbnailURLs(c *colly.Collector, w io.Writer) *colly.Collector {
 	c.OnHTML("a.thumbnail", func(e *colly.HTMLElement) {
 		url := e.Attr("href")
-		if REValidURL.MatchString(url) {
-			fmt.Println(url)
+		if REImgurURL.MatchString(url) {
+			fmt.Fprintln(w, url)
 		}
 	})
 
+	return c
+}
+
+func main() {
+	c := colly.NewCollector()
+	c = PrintThumbnailURLs(c, os.Stdout)
 	c.Visit(RedditURL)
 }
