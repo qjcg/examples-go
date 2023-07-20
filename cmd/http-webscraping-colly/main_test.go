@@ -1,13 +1,13 @@
 package main
 
 import (
-	"bytes"
 	_ "embed"
-	"fmt"
-	"testing"
 
+	"bytes"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"testing"
 
 	"github.com/gocolly/colly/v2"
 )

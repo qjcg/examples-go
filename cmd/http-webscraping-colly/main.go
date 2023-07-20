@@ -11,7 +11,12 @@ import (
 	"github.com/gocolly/colly/v2"
 )
 
-const RedditURL = `https://old.reddit.com/r/ThingsCutInHalfPorn/`
+var (
+	urls = map[string]string{
+		"reddit":     `https://old.reddit.com/r/ThingsCutInHalfPorn/`,
+		"metalsucks": `https://www.metalsucks.net/`,
+	}
+)
 
 var REImgurURL *regexp.Regexp = regexp.MustCompile("imgur")
 
@@ -26,8 +31,20 @@ func PrintThumbnailURLs(c *colly.Collector, w io.Writer) *colly.Collector {
 	return c
 }
 
+func PrintMetalSucksTitles(c *colly.Collector, w io.Writer) *colly.Collector {
+	c.OnHTML(".post-title", func(e *colly.HTMLElement) {
+		fmt.Fprintln(w, e.Text)
+	})
+
+	return c
+}
+
 func main() {
 	c := colly.NewCollector()
 	c = PrintThumbnailURLs(c, os.Stdout)
-	c.Visit(RedditURL)
+	c.Visit(urls["reddit"])
+
+	cMetalSucks := colly.NewCollector()
+	cMetalSucks = PrintMetalSucksTitles(c, os.Stdout)
+	cMetalSucks.Visit(urls["metalsucks"])
 }
