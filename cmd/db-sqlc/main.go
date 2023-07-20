@@ -6,7 +6,7 @@ import (
 	"log"
 	"reflect"
 
-	"github.com/qjcg/go-examples/cmd/goex-db-sqlc/tutorial"
+	"github.com/qjcg/go-examples/cmd/db-sqlc/tutorial"
 
 	_ "embed"
 
