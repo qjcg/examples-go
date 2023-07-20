@@ -6,7 +6,7 @@ bin_prefix := goex-
 # FIXME: CGO_ENABLED=1 needed for sqlite example, this will hang!
 .PHONY: all
 all:
-	CGO_ENABLED=0 go build -o $(outdir)/ ./cmd/...
+	CGO_ENABLED=0 go build -ldflags '-s -w' -o $(outdir)/ ./cmd/...
 
 .PHONY: install
 install:
