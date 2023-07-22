@@ -1,0 +1,7 @@
+# awk
+exec awk -F: '{print $1}' passwd
+stdout 'foo\n'
+! stderr .
+
+-- passwd --
+foo:bar:baz
