@@ -12,6 +12,7 @@ require (
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/playwright-community/playwright-go v0.3500.0
 	github.com/prometheus-community/pro-bing v0.3.0
+	github.com/rogpeppe/go-internal v1.11.0
 	github.com/spf13/cobra v1.7.0
 	github.com/spf13/viper v1.16.0
 	modernc.org/sqlite v1.24.0
@@ -43,7 +44,6 @@ require (
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.9 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
-	github.com/rogpeppe/go-internal v1.11.0 // indirect
 	github.com/saintfish/chardet v0.0.0-20230101081208-5e3ef4b5456d // indirect
 	github.com/spf13/afero v1.9.5 // indirect
 	github.com/spf13/cast v1.5.1 // indirect
