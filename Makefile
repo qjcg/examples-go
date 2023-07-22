@@ -8,6 +8,15 @@ bin_prefix := goex-
 all:
 	CGO_ENABLED=0 go build -ldflags '-s -w' -o $(outdir)/ ./cmd/...
 
+.PHONY: test
+test:
+	go test ./...
+
+.PHONY: test-integration
+test-integration:
+	go test ./... -tags integration
+
+
 .PHONY: install
 install:
 	go install ./cmd/...
