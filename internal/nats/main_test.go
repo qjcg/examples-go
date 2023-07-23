@@ -24,7 +24,7 @@ func newNATSContainer(ctx context.Context) (testcontainers.Container, error) {
 	})
 }
 
-func TestWithNATS(t *testing.T) {
+func TestPublish(t *testing.T) {
 	ctx := context.Background()
 	natsC, err := newNATSContainer(ctx)
 	if err != nil {
