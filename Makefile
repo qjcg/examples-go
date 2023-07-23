@@ -2,7 +2,10 @@ outdir := ./out
 bin_prefix := goex-
 
 .PHONY: test
-test:
+test: test-unit
+
+.PHONY: test-unit
+test-unit:
 	go test ./...
 
 .PHONY: test-unit-nocache
