@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestBufferWriteRead(t *testing.T) {
+func TestBufferWriteThenRead(t *testing.T) {
 	var buf bytes.Buffer
 	testData := "hello\n"
 
