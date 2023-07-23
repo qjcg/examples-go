@@ -5,6 +5,10 @@ bin_prefix := goex-
 test:
 	go test ./...
 
+.PHONY: test-unit-nocache
+test-unit-nocache:
+	go test ./... -count 1
+
 .PHONY: test-integration
 test-integration:
 	go test ./... -tags integration
