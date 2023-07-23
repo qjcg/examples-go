@@ -10,6 +10,7 @@ require (
 	github.com/go-chi/render v1.0.3
 	github.com/gocolly/colly/v2 v2.1.0
 	github.com/jmoiron/sqlx v1.3.5
+	github.com/nats-io/nats.go v1.28.0
 	github.com/playwright-community/playwright-go v0.3500.0
 	github.com/prometheus-community/pro-bing v0.3.0
 	github.com/rogpeppe/go-internal v1.11.0
@@ -43,7 +44,7 @@ require (
 	github.com/mattn/go-isatty v0.0.19 // indirect
 	github.com/mattn/go-sqlite3 v1.14.17 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
-	github.com/nats-io/nats.go v1.28.0 // indirect
+	github.com/nats-io/nats-server/v2 v2.9.20 // indirect
 	github.com/nats-io/nkeys v0.4.4 // indirect
 	github.com/nats-io/nuid v1.0.1 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.9 // indirect
