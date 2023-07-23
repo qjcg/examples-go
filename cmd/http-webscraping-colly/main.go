@@ -1,5 +1,4 @@
-// A little CLI scraper for the ThingsCutInHalf reddit.
-// https://www.reddit.com/r/ThingsCutInHalfPorn/
+// A little CLI scraper.
 package main
 
 import (
@@ -7,6 +6,7 @@ import (
 	"io"
 	"os"
 	"regexp"
+	"sync"
 
 	"github.com/gocolly/colly/v2"
 )
@@ -18,7 +18,7 @@ var (
 	}
 )
 
-var REImgurURL *regexp.Regexp = regexp.MustCompile("imgur")
+var REImgurURL *regexp.Regexp = regexp.MustCompile("i.imgur.com")
 
 func PrintThumbnailURLs(c *colly.Collector, w io.Writer) *colly.Collector {
 	c.OnHTML("a.thumbnail", func(e *colly.HTMLElement) {
@@ -40,11 +40,22 @@ func PrintMetalSucksTitles(c *colly.Collector, w io.Writer) *colly.Collector {
 }
 
 func main() {
-	c := colly.NewCollector()
-	c = PrintThumbnailURLs(c, os.Stdout)
-	c.Visit(urls["reddit"])
+	var wg sync.WaitGroup
+	wg.Add(2)
 
-	cMetalSucks := colly.NewCollector()
-	cMetalSucks = PrintMetalSucksTitles(c, os.Stdout)
-	cMetalSucks.Visit(urls["metalsucks"])
+	go func() {
+		c := colly.NewCollector()
+		c = PrintThumbnailURLs(c, os.Stdout)
+		c.Visit(urls["reddit"])
+		wg.Done()
+	}()
+
+	go func() {
+		cMetalSucks := colly.NewCollector()
+		cMetalSucks = PrintMetalSucksTitles(cMetalSucks, os.Stdout)
+		cMetalSucks.Visit(urls["metalsucks"])
+		wg.Done()
+	}()
+
+	wg.Wait()
 }
