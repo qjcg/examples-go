@@ -10,6 +10,7 @@ import (
 
 func TestCommand(t *testing.T) {
 	var buf bytes.Buffer
+	want := "hugo hugo hugo"
 
 	testCmd := &cobra.Command{
 		Use:   "hugo",
@@ -18,7 +19,7 @@ func TestCommand(t *testing.T) {
                 love by spf13 and friends in Go.
                 Complete documentation is available at https://gohugo.io/documentation/`,
 		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Fprintf(&buf, "hugo hugo hugo")
+			fmt.Fprintf(&buf, want)
 		},
 	}
 
@@ -26,7 +27,6 @@ func TestCommand(t *testing.T) {
 		t.Fatalf("failed to execute command: %v", err)
 	}
 
-	want := "hugo hugo hugo"
 	got := buf.String()
 	if got != want {
 		t.Fatalf("want %v got %v", want, got)
