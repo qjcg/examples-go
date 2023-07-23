@@ -3,7 +3,6 @@
 package playwright
 
 import (
-	"log"
 	"testing"
 
 	"github.com/playwright-community/playwright-go"
@@ -13,11 +12,11 @@ import (
 func TestScreenshot(t *testing.T) {
 	pw, err := playwright.Run()
 	if err != nil {
-		log.Fatalf("could not launch playwright: %v", err)
+		t.Fatalf("could not launch playwright: %v", err)
 	}
 	browser, err := pw.Chromium.Launch()
 	if err != nil {
-		log.Fatalf("could not launch Chromium: %v", err)
+		t.Fatalf("could not launch Chromium: %v", err)
 	}
 	page, err := browser.NewPage()
 	if err != nil {
@@ -29,7 +28,7 @@ func TestScreenshot(t *testing.T) {
 		t.Fatalf("could not goto: %v", err)
 	}
 	if _, err = page.Screenshot(playwright.PageScreenshotOptions{
-		Path: playwright.String("screenshot.png"),
+		//Path: playwright.String("screenshot.png"),
 	}); err != nil {
 		t.Fatalf("could not create screenshot: %v", err)
 	}
