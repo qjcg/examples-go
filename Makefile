@@ -9,6 +9,10 @@ test:
 test-integration:
 	go test ./... -tags integration
 
+.PHONY: test-integration-nocache
+test-integration-nocache:
+	go test ./... -tags integration -count 1
+
 .PHONY: all
 all:
 	CGO_ENABLED=0 go build -ldflags '-s -w' -o $(outdir)/ ./cmd/...
