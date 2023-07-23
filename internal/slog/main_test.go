@@ -17,8 +17,8 @@ func TestSlog(t *testing.T) {
 	logger.Info(want)
 
 	got := buf.String()
-	t.Logf("\nwant: %v\ngot: %v", want, got)
 	if !REwant.MatchString(got) {
 		t.Fatalf("wanted match for %v got %v", REwant.String(), got)
 	}
+	t.Logf("\nwant: %v\ngot: %v", want, got)
 }
