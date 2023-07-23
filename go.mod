@@ -14,6 +14,7 @@ require (
 	github.com/playwright-community/playwright-go v0.3500.0
 	github.com/prometheus-community/pro-bing v0.3.0
 	github.com/rogpeppe/go-internal v1.11.0
+	github.com/rwxrob/bonzai v0.20.10
 	github.com/spf13/cobra v1.7.0
 	github.com/spf13/viper v1.16.0
 	github.com/testcontainers/testcontainers-go v0.21.0
@@ -69,6 +70,12 @@ require (
 	github.com/pelletier/go-toml/v2 v2.0.9 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
+	github.com/rwxrob/compcmd v0.3.0 // indirect
+	github.com/rwxrob/fn v0.3.3 // indirect
+	github.com/rwxrob/pegn v0.1.0 // indirect
+	github.com/rwxrob/structs v0.6.0 // indirect
+	github.com/rwxrob/term v0.2.8 // indirect
+	github.com/rwxrob/to v0.11.2 // indirect
 	github.com/saintfish/chardet v0.0.0-20230101081208-5e3ef4b5456d // indirect
 	github.com/sirupsen/logrus v1.9.0 // indirect
 	github.com/spf13/afero v1.9.5 // indirect
@@ -84,6 +91,7 @@ require (
 	golang.org/x/net v0.12.0 // indirect
 	golang.org/x/sync v0.3.0 // indirect
 	golang.org/x/sys v0.10.0 // indirect
+	golang.org/x/term v0.10.0 // indirect
 	golang.org/x/text v0.11.0 // indirect
 	golang.org/x/tools v0.11.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
