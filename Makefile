@@ -6,19 +6,19 @@ test: test-unit
 
 .PHONY: test-unit
 test-unit:
-	go test ./...
+	go test ./... -cover
 
 .PHONY: test-unit-nocache
 test-unit-nocache:
-	go test ./... -count 1
+	go test ./... -count 1 -cover
 
 .PHONY: test-integration
 test-integration:
-	go test ./... -tags integration
+	go test ./... -tags integration -cover
 
 .PHONY: test-integration-nocache
 test-integration-nocache:
-	go test ./... -tags integration -count 1
+	go test ./... -tags integration -count 1 -cover
 
 .PHONY: all
 all:
