@@ -27,7 +27,11 @@
 
 *** Visualizations
 
-*** PDF
+
+** Docs
+- [ ] markdown
+- [ ] org-mode
+- [ ] pdf
 
 
 ** App Foundations
