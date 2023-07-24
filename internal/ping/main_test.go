@@ -14,7 +14,7 @@ func TestICMPPingExampleDotCom(t *testing.T) {
 		t.Fatalf("Error creating pinger: %v", err)
 	}
 
-	pinger.Count = 3 // Send 3 pings
+	pinger.Count = 3
 	err = pinger.Run()
 	if err != nil {
 		t.Fatalf("Expected no error, but got: %v", err)
@@ -29,6 +29,6 @@ func TestICMPPingExampleDotCom(t *testing.T) {
 func TestICMPPingInvalidHost(t *testing.T) {
 	_, err := probing.NewPinger("nonexistent-host")
 	if err == nil {
-		t.Fatalf("Expected error with invalid host, got nil: %v", err)
+		t.Fatalf("expected error pinging invalid host, got nil")
 	}
 }
