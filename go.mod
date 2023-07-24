@@ -3,6 +3,7 @@ module github.com/qjcg/go-examples
 go 1.20
 
 require (
+	github.com/AlecAivazis/survey/v2 v2.3.7
 	github.com/fatih/color v1.15.0
 	github.com/fsnotify/fsnotify v1.6.0
 	github.com/go-chi/chi/v5 v5.0.10
@@ -18,6 +19,7 @@ require (
 	github.com/spf13/cobra v1.7.0
 	github.com/spf13/viper v1.16.0
 	github.com/testcontainers/testcontainers-go v0.21.0
+	golang.org/x/exp v0.0.0-20230510235704-dd950f8aeaea
 	modernc.org/sqlite v1.24.0
 )
 
@@ -56,6 +58,7 @@ require (
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.19 // indirect
 	github.com/mattn/go-sqlite3 v1.14.17 // indirect
+	github.com/mgutz/ansi v0.0.0-20170206155736-9520e82c474b // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/moby/patternmatcher v0.5.0 // indirect
 	github.com/moby/sys/sequential v0.5.0 // indirect
@@ -77,6 +80,7 @@ require (
 	github.com/rwxrob/term v0.2.8 // indirect
 	github.com/rwxrob/to v0.11.2 // indirect
 	github.com/saintfish/chardet v0.0.0-20230101081208-5e3ef4b5456d // indirect
+	github.com/sashabaranov/go-openai v1.14.1
 	github.com/sirupsen/logrus v1.9.0 // indirect
 	github.com/spf13/afero v1.9.5 // indirect
 	github.com/spf13/cast v1.5.1 // indirect
@@ -86,7 +90,6 @@ require (
 	github.com/temoto/robotstxt v1.1.2 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/crypto v0.11.0 // indirect
-	golang.org/x/exp v0.0.0-20230510235704-dd950f8aeaea // indirect
 	golang.org/x/mod v0.12.0 // indirect
 	golang.org/x/net v0.12.0 // indirect
 	golang.org/x/sync v0.3.0 // indirect
