@@ -1,0 +1,17 @@
+# GREETER
+
+# no argument
+exec greet
+stdout 'Hello, Jerry!'
+
+# name flag
+exec greet -n Elaine
+stdout 'Hello, Elaine!'
+
+# name flag multiword
+exec greet -n Elaine
+stdout 'Hello, Elaine!'
+
+# name flag multiword
+exec greet -n 'Cosmo Kramer'
+stdout 'Hello, Cosmo Kramer!'

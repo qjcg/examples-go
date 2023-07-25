@@ -23,7 +23,7 @@ func TestUp(t *testing.T) {
 			got := b.String()
 
 			if !strings.Contains(got, tc.want) {
-				t.Error("desired substring not in output")
+				t.Fatal("desired substring not in output")
 			}
 		})
 

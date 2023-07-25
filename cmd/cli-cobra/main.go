@@ -1,12 +1,21 @@
 package main
 
-import "github.com/spf13/cobra"
+import (
+	"os"
+
+	"github.com/spf13/cobra"
+)
 
 var rootCmd = &cobra.Command{
 	Use:   "cobrademo",
 	Short: "A demo application using cobra",
 }
 
-func main() {
+func Main() int {
 	rootCmd.Execute()
+	return 0
+}
+
+func main() {
+	os.Exit(Main())
 }

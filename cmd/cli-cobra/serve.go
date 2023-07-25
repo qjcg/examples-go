@@ -7,7 +7,6 @@ import (
 )
 
 var (
-	// Subcommand: serve
 	cmdServe = &cobra.Command{
 		Use:   "serve",
 		Short: "Serve our web application",
@@ -31,5 +30,5 @@ func init() {
 
 // Serve will start a server listening on the provided port.
 func Serve(port int) {
-	fmt.Printf("Listening on port: %d\n", port)
+	fmt.Printf("Listening on port: %v\n", port)
 }

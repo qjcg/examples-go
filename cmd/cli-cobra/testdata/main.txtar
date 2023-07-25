@@ -1,0 +1,9 @@
+# COBRA
+
+# no argument
+exec cobrademo
+stdout 'A demo application using cobra'
+
+# subcommand: serve
+exec cobrademo serve
+stdout 'Listening on port: 8080'
