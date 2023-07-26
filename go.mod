@@ -16,6 +16,7 @@ require (
 	github.com/prometheus-community/pro-bing v0.3.0
 	github.com/rogpeppe/go-internal v1.11.0
 	github.com/rwxrob/bonzai v0.20.10
+	github.com/rwxrob/help v0.7.2
 	github.com/spf13/cobra v1.7.0
 	github.com/spf13/viper v1.16.0
 	github.com/testcontainers/testcontainers-go v0.21.0

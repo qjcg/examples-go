@@ -1,0 +1,15 @@
+# BONZAI COMMAND
+
+# no arguments
+exec example
+stdout 'executing command: example\n'
+
+# help
+exec example -h
+stdout 'SYNOPSIS'
+
+exec example --help
+stdout 'SYNOPSIS'
+
+exec example help
+stdout 'SYNOPSIS'
