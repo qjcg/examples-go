@@ -41,9 +41,9 @@ func run() error {
 	// create an author
 	insertedAuthor, err := queries.CreateAuthor(ctx, tutorial.CreateAuthorParams{
 		Name: "Brian Kernighan",
-		Bio:  sql.NullString{
+		Bio: sql.NullString{
 			String: "Co-author of The C Programming Language and The Go Programming Language",
-			Valid: true
+			Valid:  true,
 		},
 	})
 	if err != nil {
