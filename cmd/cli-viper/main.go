@@ -1,52 +1,71 @@
-// Demonstrate using viper for app configuration.
+// Demonstrate the use of the viper package for configuration.
 package main
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
 )
 
-func main() {
-	conf := viper.New()
+type Config struct {
+	Server string
+	Port   uint
+}
+
+func NewViper() *viper.Viper {
+	v := viper.New()
 
 	// Environment variables.
-	conf.SetEnvPrefix("demo") // DEMO_
-	conf.BindEnv("server")    // DEMO_SERVER
-	conf.BindEnv("port")      // DEMO_PORT
-	conf.SetDefault("server", "demo.example.com")
-	conf.SetDefault("port", 8080)
+	v.SetEnvPrefix("demo") // DEMO_
+	v.BindEnv("server")    // DEMO_SERVER
+	v.BindEnv("port")      // DEMO_PORT
+	v.SetDefault("server", "demo.example.com")
+	v.SetDefault("port", 8080)
 
 	// Config file.
 	// NOTE: Env vars take precedence!
 	// See precedence order: https://github.com/spf13/viper#why-viper
-	conf.SetConfigName("config")
-	conf.AddConfigPath(".")
-	conf.AddConfigPath("/tmp")
-	if err := conf.ReadInConfig(); err != nil {
+	v.SetConfigName("config")
+	v.AddConfigPath(".")
+	v.AddConfigPath("/tmp")
+
+	return v
+}
+
+func main() {
+	v := NewViper()
+
+	if err := v.ReadInConfig(); err != nil {
+		log.Println(err)
+	}
+
+	var conf Config
+	if err := v.Unmarshal(&conf); err != nil {
 		log.Println(err)
 	}
 
 	// Print initial app settings.
-	printConf(conf)
+	fmt.Printf("%#v\n", &conf)
+	printConf(v)
 
 	// Watch config file and run callback function on changes.
-	conf.WatchConfig()
-	conf.OnConfigChange(func(e fsnotify.Event) {
+	v.WatchConfig()
+	v.OnConfigChange(func(e fsnotify.Event) {
 		if e.Op == fsnotify.Write {
-			printConf(conf)
+			printConf(v)
 		}
 	})
 
-	// Wait forever for receive on chan (exit with Ctrl-C).
-	<-make(chan bool)
+	// Wait forever (exit with Ctrl-C).
+	select {}
 }
 
-// printConf prints the current app configuration settings.
-func printConf(conf *viper.Viper) {
-	log.Printf("server: %s, port: %d\n",
-		conf.GetString("server"),
-		conf.GetInt("port"),
+func printConf(v *viper.Viper) {
+	log.Printf(
+		"server: %s, port: %d\n",
+		v.GetString("server"),
+		v.GetInt("port"),
 	)
 }
