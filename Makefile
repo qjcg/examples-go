@@ -1,24 +1,28 @@
+gocmd_test := go test ./... -cover
+flag_nocache := -count 1
+flag_integration := -tags integration
+
 outdir := ./out
-bin_prefix := goex-
+
 
 .PHONY: test
 test: test-unit
 
 .PHONY: test-unit
 test-unit:
-	go test ./... -cover
+	$(gocmd_test)
 
 .PHONY: test-unit-nocache
 test-unit-nocache:
-	go test ./... -count 1 -cover
+	$(gocmd_test) $(flag_nocache)
 
 .PHONY: test-integration
 test-integration:
-	go test ./... -tags integration -cover
+	$(gocmd_test) $(flag_integration)
 
 .PHONY: test-integration-nocache
 test-integration-nocache:
-	go test ./... -tags integration -count 1 -cover
+	$(gocmd_test) $(flag_integration) $(flag_nocache)
 
 .PHONY: all
 all:
@@ -27,10 +31,6 @@ all:
 .PHONY: install
 install:
 	go install ./cmd/...
-
-.PHONY: uninstall
-uninstall:
-	rm $(GOBIN)/$(bin_prefix)*
 
 .PHONY: clean
 clean:
