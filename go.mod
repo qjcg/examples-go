@@ -11,6 +11,8 @@ require (
 	github.com/go-chi/render v1.0.3
 	github.com/gocolly/colly/v2 v2.1.0
 	github.com/jmoiron/sqlx v1.3.5
+	github.com/knadh/koanf/providers/env v0.1.0
+	github.com/knadh/koanf/v2 v2.0.1
 	github.com/nats-io/nats.go v1.28.0
 	github.com/playwright-community/playwright-go v0.3500.0
 	github.com/prometheus-community/pro-bing v0.3.0
@@ -55,12 +57,15 @@ require (
 	github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51 // indirect
 	github.com/kennygrant/sanitize v1.2.4 // indirect
 	github.com/klauspost/compress v1.16.5 // indirect
+	github.com/knadh/koanf/maps v0.1.1 // indirect
 	github.com/magiconair/properties v1.8.7 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.19 // indirect
 	github.com/mattn/go-sqlite3 v1.14.17 // indirect
 	github.com/mgutz/ansi v0.0.0-20200706080929-d51e80ef957d // indirect
+	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
+	github.com/mitchellh/reflectwalk v1.0.2 // indirect
 	github.com/moby/patternmatcher v0.5.0 // indirect
 	github.com/moby/sys/sequential v0.5.0 // indirect
 	github.com/moby/term v0.5.0 // indirect
