@@ -33,11 +33,6 @@ func newNATSContainer(ctx context.Context) (testcontainers.Container, error) {
 }
 
 func TestPubSub(t *testing.T) {
-	// FIXME: Remove Skip once issue mentioned below is fixed (e.g. with next Docker Desktop release).
-	// https://github.com/testcontainers/testcontainers-go/issues/1359
-	// https://github.com/golang/go/issues/61431
-	t.Skip()
-
 	ctx := context.Background()
 	natsC, err := newNATSContainer(ctx)
 	if err != nil {
