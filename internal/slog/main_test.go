@@ -2,10 +2,9 @@ package slog
 
 import (
 	"bytes"
+	"log/slog"
 	"regexp"
 	"testing"
-
-	"golang.org/x/exp/slog"
 )
 
 func TestSlog(t *testing.T) {
