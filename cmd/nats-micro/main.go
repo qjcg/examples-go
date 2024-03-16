@@ -3,6 +3,8 @@ package main
 
 import (
 	"flag"
+	"log"
+	"runtime"
 
 	"github.com/nats-io/nats.go"
 	"github.com/nats-io/nats.go/micro"
@@ -28,4 +30,9 @@ func main() {
 			Handler: micro.HandlerFunc(echoHandler),
 		},
 	})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	runtime.Goexit()
 }
