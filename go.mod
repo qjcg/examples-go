@@ -13,7 +13,7 @@ require (
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/knadh/koanf/providers/env v0.1.0
 	github.com/knadh/koanf/v2 v2.1.0
-	github.com/nats-io/nats.go v1.31.0
+	github.com/nats-io/nats.go v1.33.1
 	github.com/playwright-community/playwright-go v0.3500.0
 	github.com/prometheus-community/pro-bing v0.3.0
 	github.com/rogpeppe/go-internal v1.11.0
@@ -59,7 +59,7 @@ require (
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51 // indirect
 	github.com/kennygrant/sanitize v1.2.4 // indirect
-	github.com/klauspost/compress v1.17.0 // indirect
+	github.com/klauspost/compress v1.17.7 // indirect
 	github.com/knadh/koanf/maps v0.1.1 // indirect
 	github.com/lufia/plan9stats v0.0.0-20211012122336-39d0f177ccd0 // indirect
 	github.com/magiconair/properties v1.8.7 // indirect
@@ -73,7 +73,7 @@ require (
 	github.com/moby/sys/sequential v0.5.0 // indirect
 	github.com/moby/term v0.5.0 // indirect
 	github.com/morikuni/aec v1.0.0 // indirect
-	github.com/nats-io/nkeys v0.4.6 // indirect
+	github.com/nats-io/nkeys v0.4.7 // indirect
 	github.com/nats-io/nuid v1.0.1 // indirect
 	github.com/ncruces/go-strftime v0.1.9 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect

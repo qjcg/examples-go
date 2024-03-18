@@ -1,0 +1,26 @@
+input:
+  generate:
+    count: 10000
+    interval: ""
+    ## Subject template "orders.{location}.{id}.{status}"
+    mapping: |
+      let locations = ["US", "CA", "EU"]
+
+      root.id = random_int()
+      root.location = $locations.index(random_int(max: 2))
+      root.status = "pending"
+      root.created_at = now()
+      root.sku = uuid_v4()
+
+      root.customer = {}
+      root.customer.first_name = fake("first_name")
+      root.customer.last_name = fake("first_name")
+      root.customer.email = fake("email")
+      root.customer.cc_number = fake("cc_number")
+      root.customer.cc_type = fake("cc_type")
+
+output:
+  label: "event_publisher"
+  nats_jetstream:
+    urls: ["nats://nats:4222"]
+    subject: orders.${!location}.${!id}.${!status}
