@@ -2,8 +2,8 @@
 package main
 
 import (
-	"fmt"
 	"log"
+	"runtime"
 
 	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
@@ -47,7 +47,6 @@ func main() {
 	}
 
 	// Print initial app settings.
-	fmt.Printf("%#v\n", &conf)
 	printConf(v)
 
 	// Watch config file and run callback function on changes.
@@ -59,7 +58,7 @@ func main() {
 	})
 
 	// Wait forever (exit with Ctrl-C).
-	select {}
+	runtime.Goexit()
 }
 
 func printConf(v *viper.Viper) {
