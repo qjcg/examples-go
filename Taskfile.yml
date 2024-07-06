@@ -12,6 +12,11 @@ tasks:
   default:
     cmds:
       - task: test:unit
+      - task: test:integration
+
+  test:
+    cmds:
+      - task: test:unit
 
   test:unit:
     cmds:
