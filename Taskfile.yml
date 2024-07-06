@@ -3,39 +3,20 @@
 version: '3'
 
 vars:
-  GOCMD_TEST: go test ./... -cover
+  GOCMD_TEST: go run gotest.tools/gotestsum@v1.12.0 -- ./...
   FLAG_NOCACHE: -count 1
   FLAG_INTEGRATION: -tags integration
-  OUTDIR: ./out
 
 tasks:
   default:
-    cmds:
-      - task: test:unit
-      - task: test:integration
+    - task: test:unit
 
   test:
-    cmds:
-      - task: test:unit
+    - task: test:unit
 
-  test:unit:
-    cmds:
-      - '{{ .GOCMD_TEST }}'
-
-  test:unit-nocache:
-    cmds:
-      - '{{ .GOCMD_TEST }} {{ .FLAG_NOCACHE }}'
-
-  test:integration:
-    cmds:
-      - '{{ .GOCMD_TEST }} {{ .FLAG_INTEGRATION }}'
-
-  test:integration-nocache:
-    cmds:
-      - '{{ .GOCMD_TEST }} {{ .FLAG_INTEGRATION }} {{ .FLAG_NOCACHE }}'
+  test:unit: '{{ .GOCMD_TEST }}'
+  test:unit-nocache: '{{ .GOCMD_TEST }} {{ .FLAG_NOCACHE }}'
+  test:integration: '{{ .GOCMD_TEST }} {{ .FLAG_INTEGRATION }}'
+  test:integration-nocache: '{{ .GOCMD_TEST }} {{ .FLAG_INTEGRATION }} {{ .FLAG_NOCACHE }}'
 
   install: go install ./cmd/...
-
-  clean:
-    cmds:
-      - rm -rf {{ .OUTDIR }}
