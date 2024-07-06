@@ -2,3 +2,4 @@ out/
 *.db
 *.sqlite
 .env
+internal/playwright/*.png
