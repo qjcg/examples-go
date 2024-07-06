@@ -6,7 +6,6 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"log"
 	"strings"
 	"testing"
 	"time"
@@ -38,7 +37,7 @@ func TestPubSub(t *testing.T) {
 	ctx := context.Background()
 	natsContainer, err := tcNATS.Run(ctx, "nats:2.10-alpine")
 	if err != nil {
-		log.Fatalf("failed to create NATS container: %s", err)
+		t.Fatalf("failed to create NATS container: %s", err)
 	}
 	defer func() {
 		if err := natsContainer.Terminate(ctx); err != nil {
