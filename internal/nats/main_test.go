@@ -6,12 +6,14 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"log"
 	"strings"
 	"testing"
 	"time"
 
 	"github.com/nats-io/nats.go"
 	"github.com/testcontainers/testcontainers-go"
+	tcNATS "github.com/testcontainers/testcontainers-go/modules/nats"
 	"github.com/testcontainers/testcontainers-go/wait"
 )
 
@@ -34,17 +36,17 @@ func newNATSContainer(ctx context.Context) (testcontainers.Container, error) {
 
 func TestPubSub(t *testing.T) {
 	ctx := context.Background()
-	natsC, err := newNATSContainer(ctx)
+	natsContainer, err := tcNATS.Run(ctx, "nats:2.10-alpine")
 	if err != nil {
-		t.Fatalf("failed to create NATS container: %v", err)
+		log.Fatalf("failed to create NATS container: %s", err)
 	}
 	defer func() {
-		if err := natsC.Terminate(ctx); err != nil {
+		if err := natsContainer.Terminate(ctx); err != nil {
 			t.Fatalf("failed to terminate container: %s", err.Error())
 		}
 	}()
 
-	endpoint, err := natsC.Endpoint(ctx, "")
+	endpoint, err := natsContainer.Endpoint(ctx, "")
 	if err != nil {
 		t.Fatalf("failed to get NATS endpoint: %v", err)
 	}
