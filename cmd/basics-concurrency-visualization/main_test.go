@@ -9,23 +9,18 @@ import (
 )
 
 func TestUp(t *testing.T) {
-	testCases := []struct {
-		description string
-		want        string
-	}{
-		{"basic", "U42"},
+	f := func(want string) {
+		t.Helper()
+		var b bytes.Buffer
+		main.Up(&b)
+		got := b.String()
+
+		if !strings.Contains(got, want) {
+			t.Fatal("desired substring not in output")
+		}
 	}
 
-	for _, tc := range testCases {
-		t.Run(tc.description, func(t *testing.T) {
-			var b bytes.Buffer
-			main.Up(&b)
-			got := b.String()
-
-			if !strings.Contains(got, tc.want) {
-				t.Fatal("desired substring not in output")
-			}
-		})
-
-	}
+	f("")
+	f(" ")
+	f("U42")
 }
