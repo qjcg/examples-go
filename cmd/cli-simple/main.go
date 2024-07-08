@@ -10,8 +10,8 @@ import (
 func usage() {
 	w := flag.CommandLine.Output()
 	fmt.Fprintln(w, "Cool Coffee CLI: The best way to get a cup of Joe!")
+	fmt.Fprintf(w, "Copyright Cool CLI Corp 1997\n")
 	flag.PrintDefaults()
-	fmt.Fprintln(w, "\nCopyright Cool CLI Corp 1997")
 }
 
 func main() {
