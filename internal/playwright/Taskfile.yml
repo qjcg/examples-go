@@ -1,0 +1,10 @@
+# https://taskfile.dev
+
+version: '3'
+
+tasks:
+  default:
+    - task: test
+
+  test: go test -tags integration -v
+  clean: rm -rf *.png
