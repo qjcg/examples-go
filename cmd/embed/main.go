@@ -6,13 +6,21 @@ import (
 	"log"
 )
 
-//go:embed sql
+//go:embed testdata/greeting.txt
+var greeting string
+
+//go:embed testdata/sql
 var content embed.FS
 
 func main() {
-	demoData, err := content.ReadFile("sql/demo.sql")
+	demoData, err := content.ReadFile("testdata/sql/demo.sql")
 	if err != nil {
 		log.Fatal(err)
 	}
 	fmt.Println(string(demoData))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Printf("Greeting: %s\n", greeting)
 }
