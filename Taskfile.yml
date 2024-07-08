@@ -20,3 +20,7 @@ tasks:
   test:integration-nocache: '{{ .GOCMD_TEST }} {{ .FLAG_INTEGRATION }} {{ .FLAG_NOCACHE }}'
 
   install: go install ./cmd/...
+
+  update-deps:
+    - go get -u ./...
+    - go mod tidy
