@@ -15,8 +15,8 @@ var cmdRoot = &Z.Cmd{
 	License:     "GPL-3.0",
 	Description: "",
 	Dynamic:     map[string]any{},
-	Source:      "https://github.com/qjcg/go-examples",
-	Issues:      "https://github.com/qjcg/go-examples/issues",
+	Source:      "https://github.com/qjcg/examples-go",
+	Issues:      "https://github.com/qjcg/examples-go/issues",
 	Commands: []*Z.Cmd{
 		help.Cmd,
 	},

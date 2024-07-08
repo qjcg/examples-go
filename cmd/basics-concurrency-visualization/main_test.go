@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	main "github.com/qjcg/go-examples/cmd/basics-concurrency-visualization"
+	main "github.com/qjcg/examples-go/cmd/basics-concurrency-visualization"
 )
 
 func TestUp(t *testing.T) {

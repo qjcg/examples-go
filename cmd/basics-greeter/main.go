@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/qjcg/go-examples/internal/greet"
+	"github.com/qjcg/examples-go/internal/greet"
 )
 
 func Main() int {

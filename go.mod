@@ -1,4 +1,4 @@
-module github.com/qjcg/go-examples
+module github.com/qjcg/examples-go
 
 go 1.22.5
 

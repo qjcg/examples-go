@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/qjcg/go-examples/internal/greet"
+	"github.com/qjcg/examples-go/internal/greet"
 )
 
 func TestGreet(t *testing.T) {
