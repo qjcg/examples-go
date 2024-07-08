@@ -24,3 +24,5 @@ tasks:
   update-deps:
     - go get -u ./...
     - go mod tidy
+
+  docs: go run golang.org/x/pkgsite/cmd/pkgsite@latest
