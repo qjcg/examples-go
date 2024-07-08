@@ -10,21 +10,22 @@ import (
 	"github.com/nats-io/nats.go/micro"
 )
 
+func echoHandler(req micro.Request) {
+	req.Respond(req.Data())
+}
+
 func main() {
 	flagURL := flag.String("u", nats.DefaultURL, "nats URL")
 	flag.Parse()
 
-	nc, _ := nats.Connect(*flagURL)
-
-	// request handler
-	echoHandler := func(req micro.Request) {
-		req.Respond(req.Data())
+	nc, err := nats.Connect(*flagURL)
+	if err != nil {
+		log.Fatal(err)
 	}
 
-	_, err := micro.AddService(nc, micro.Config{
+	_, err = micro.AddService(nc, micro.Config{
 		Name:    "EchoService",
-		Version: "1.0.0",
-		// base handler
+		Version: "0.1.0",
 		Endpoint: &micro.EndpointConfig{
 			Subject: "svc.echo",
 			Handler: micro.HandlerFunc(echoHandler),

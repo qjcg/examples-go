@@ -6,11 +6,14 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"log"
+	"runtime"
 	"strings"
 	"testing"
 	"time"
 
 	"github.com/nats-io/nats.go"
+	"github.com/nats-io/nats.go/micro"
 	"github.com/testcontainers/testcontainers-go"
 	tcNATS "github.com/testcontainers/testcontainers-go/modules/nats"
 	"github.com/testcontainers/testcontainers-go/wait"
@@ -76,11 +79,40 @@ func TestPubSub(t *testing.T) {
 		t.Fatalf("failed to drain subscription: %v", err)
 	}
 
-	time.Sleep(2 * time.Second)
+	time.Sleep(3 * time.Second)
 
 	got := strings.TrimSpace(buf.String())
 	t.Logf("received %v", got)
 	if want != got {
 		t.Fatalf("want %v got %v", want, got)
 	}
+}
+
+func ExampleMicroService() {
+	nc, err := nats.Connect("127.0.0.1:4222")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer nc.Close()
+
+	echoHandler := func(req micro.Request) {
+		req.Respond(req.Data())
+	}
+
+	config := micro.Config{
+		Name:    "EchoService",
+		Version: "0.1.0",
+		Endpoint: &micro.EndpointConfig{
+			Subject: "echo",
+			Handler: micro.HandlerFunc(echoHandler),
+		},
+	}
+
+	svc, err := micro.AddService(nc, config)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer svc.Stop()
+
+	runtime.Goexit()
 }
