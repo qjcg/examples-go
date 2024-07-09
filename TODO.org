@@ -14,10 +14,7 @@
 - [ ] flag
 
 *** Testing
-- [ ] testcontainers
-- [ ] godog
-- [ ] ginkgo
-
+- [X] testcontainers
 
 
 ** Multimedia
@@ -38,7 +35,7 @@
 
 *** Layered Architecture
 - [ ] Controller
-- [ ] Repository
+- [ ] Repository (Store)
 - [ ] Service
 
 *** Database
@@ -51,21 +48,19 @@
 ** Web
 *** TLS
 
-
 ** CLI Tools
 - [X] cobra
 - [X] bonzai
 - [ ] survey
 
-
 ** Games
 - [ ] ebiten
-
 
 ** Blockchain
 - [ ] bitcoin
 - [ ] ethereum
-
+- [ ] gnoland
 
 ** AI
 - [ ] openai
+- [ ] ollama
