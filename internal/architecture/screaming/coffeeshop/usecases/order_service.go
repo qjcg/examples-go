@@ -24,15 +24,18 @@ func (s *OrderService) AddItem(items ...entities.Item) {
 }
 
 func (s *OrderService) Total() float64 {
-	var total float64
-
 	orders, err := s.Store.FindAll()
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	var total float64
 	for i := 0; i < len(orders); i++ {
-		total += orders[i].Price
+		items := orders[i].Items
+
+		for j := 0; j < len(items); j++ {
+			total += items[j].Price
+		}
 	}
 
 	return total
