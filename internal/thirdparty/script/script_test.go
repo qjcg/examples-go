@@ -1,30 +1,36 @@
 package script
 
 import (
+	"fmt"
 	"log"
-	"time"
+	"strings"
 
 	"github.com/bitfield/script"
 )
 
-func ExampleGet() {
-	_, err := script.Get("https://httpbingo.org/stream/3").JQ(".id").Stdout()
+func ExampleFile() {
+	lineCount, err := script.File("./testdata/passwd").Match("nobody").CountLines()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	time.Sleep(time.Second * 5)
-	// Output:
-	// 0
-	// 1
-	// 2
+	fmt.Println(lineCount)
+
+	// Output: 1
 }
 
-func ExampleFile() {
-	_, err := script.File("/etc/passwd").Match("root")
+func ExampleWithReader() {
+	r := strings.NewReader(`first line
+second line
+third line
+`)
+
+	lineCount, err := script.NewPipe().WithReader(r).CountLines()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// Output:b
+	fmt.Println(lineCount)
+
+	// Output: 3
 }
