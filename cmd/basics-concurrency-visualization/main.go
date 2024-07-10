@@ -6,25 +6,55 @@ import (
 	"os"
 	"sync"
 
-	"github.com/fatih/color"
+	"github.com/charmbracelet/lipgloss"
+)
+
+const (
+	ansiMagenta = "5"
+	ansiCyan    = "6"
 )
 
 var (
-	cyan    = color.New(color.FgCyan)
-	magenta = color.New(color.FgMagenta)
+	cyan    = lipgloss.NewStyle().Foreground(lipgloss.Color(ansiCyan))
+	magenta = lipgloss.NewStyle().Foreground(lipgloss.Color(ansiMagenta))
 )
+
+type Counter struct {
+	w      io.Writer // TODO: Consider chan(int) instead?
+	Start  int
+	End    int
+	Symbol string
+	Style  lipgloss.Style
+}
+
+func NewCounter() *Counter {
+	return &Counter{}
+}
+
+func (c *Counter) Count() {
+	switch {
+	case c.Start > c.End:
+		for i := c.Start; i >= c.End; i-- {
+		}
+	case c.Start < c.End:
+		for i := c.Start; i <= c.End; i++ {
+		}
+	case c.Start == c.End:
+		return
+	}
+}
 
 // Up prints all numbers from 0-100, counting Up.
 func Up(w io.Writer) {
 	for i := 0; i <= 100; i++ {
-		cyan.Fprintf(w, "U%d ", i)
+		fmt.Fprintf(w, cyan.Render("U%d "), i)
 	}
 }
 
 // Down prints all numbers from 100-0, counting Down.
 func Down(w io.Writer) {
 	for i := 100; i >= 0; i-- {
-		magenta.Fprintf(w, "D%d ", i)
+		fmt.Fprintf(w, magenta.Render("D%d "), i)
 	}
 }
 
