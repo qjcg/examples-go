@@ -1,6 +1,6 @@
 //go:build integration
 
-package ping
+package pro_bing
 
 import (
 	"testing"
