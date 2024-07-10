@@ -8,7 +8,7 @@ import (
 )
 
 func init() {
-	// Using a constant seed makes the output of Examples deterministic.
+	// Using a constant seed for all examples makes their outputs deterministic.
 	err := gofakeit.Seed(123)
 	if err != nil {
 		log.Fatal(err)
@@ -33,19 +33,81 @@ func ExampleStruct() {
 	fmt.Println(u.Email)
 
 	// Output:
-	// 86
-	// Harold
-	// francesvonrueden@heathcote.net
+	// 42
+	// Frances
+	// terrenceheathcote@marquardt.org
 }
 
-func ExampleFunc() string {
-	gofakeit.AddFuncLookup("friendname", gofakeit.Info{
+// Custom function via AddFuncLookup.
+func ExampleAddFuncLookup() {
+	gofakeit.AddFuncLookup("chilli", gofakeit.Info{
 		Category:    "custom",
-		Description: "Random friend name",
-		Example:     "bill",
+		Description: "Random chilli pepper name",
+		Example:     "habanero",
 		Output:      "string",
 		Generate: func(f *gofakeit.Faker, m *gofakeit.MapParams, info *gofakeit.Info) (any, error) {
-			return f.RandomString([]string{"bill", "bob", "sally"}), nil
+			return f.RandomString([]string{"tabasco", "habanero", "scotch bonnet"}), nil
 		},
 	})
+
+	type Foo struct {
+		Pepper string `fake:"{chilli}"`
+	}
+
+	var f Foo
+	err := gofakeit.Struct(&f)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println(f.Pepper)
+
+	// Output: tabasco
+}
+
+// Custom function taking param(s) via AddFuncLookup.
+func ExampleAddFuncLookup_withParams() {
+	gofakeit.AddFuncLookup("dominos", gofakeit.Info{
+		Category:    "",
+		Description: "Random dominos.",
+		Example:     "",
+		Output:      "string",
+		Params: []gofakeit.Param{
+			{Field: "count", Type: "uint", Default: "5", Description: "Number of dominos to generate"},
+		},
+		Generate: func(f *gofakeit.Faker, m *gofakeit.MapParams, info *gofakeit.Info) (any, error) {
+			count, err := info.GetUint(m, "count")
+			if err != nil {
+				return nil, err
+			}
+
+			var dominos string
+			start := 0x1f030
+			end := 0x1f09f
+			for i := 0; i < int(count); i++ {
+				v := gofakeit.Number(start, end) // Uses random seed from init().
+				dominos += string(rune(v))
+			}
+
+			return dominos, nil
+		},
+	})
+
+	type Foo struct {
+		Dominos          string `fake:"{dominos}"`
+		DominosWithCount string `fake:"{dominos:10}"`
+	}
+
+	var f Foo
+	err := gofakeit.Struct(&f)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println(f.Dominos)
+	fmt.Println(f.DominosWithCount)
+
+	// Output:
+	// 🂈🁝🂉🀻🂌
+	// 🁇🀵🁎🁷🂂🀺🂌🁍🁞🂉
 }
