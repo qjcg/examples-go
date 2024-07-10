@@ -4,6 +4,8 @@ go 1.22.5
 
 require (
 	github.com/AlecAivazis/survey/v2 v2.3.7
+	github.com/bitfield/script v0.22.1
+	github.com/brianvoe/gofakeit/v7 v7.0.4
 	github.com/charmbracelet/huh v0.5.0
 	github.com/charmbracelet/lipgloss v0.11.1-0.20240618201632-5a82e41aea3a
 	github.com/fatih/color v1.17.0
@@ -78,6 +80,8 @@ require (
 	github.com/hashicorp/golang-lru/v2 v2.0.7 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
+	github.com/itchyny/gojq v0.12.13 // indirect
+	github.com/itchyny/timefmt-go v0.1.5 // indirect
 	github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51 // indirect
 	github.com/kennygrant/sanitize v1.2.4 // indirect
 	github.com/klauspost/compress v1.17.9 // indirect
@@ -160,4 +164,5 @@ require (
 	modernc.org/memory v1.8.0 // indirect
 	modernc.org/strutil v1.2.0 // indirect
 	modernc.org/token v1.1.0 // indirect
+	mvdan.cc/sh/v3 v3.7.0 // indirect
 )
