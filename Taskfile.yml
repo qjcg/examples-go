@@ -3,9 +3,16 @@
 version: '3'
 
 vars:
-  GOCMD_TEST: go run gotest.tools/gotestsum@v1.12.0 -- ./...
-  FLAG_NOCACHE: -count 1
-  FLAG_INTEGRATION: -tags integration
+  V_PKGSITE: latest
+  V_UNCOVER: v0.0.1
+  V_GOTESTSUM: v1.12.0
+
+  COVERPROFILE: c.out
+
+  GOCMD_TEST: go run gotest.tools/gotestsum@{{.V_GOTESTSUM}} -- ./...
+  GOCMD_TEST_INTEGRATION: '{{.GOCMD_TEST}} -tags integration'
+  GOCMD_TEST_NOCACHE: '{{.GOCMD_TEST}} -count 1'
+  GOCMD_TEST_INTEGRATION_NOCACHE: '{{.GOCMD_TEST}} -tags integration -count 1'
 
 tasks:
   default:
@@ -15,9 +22,23 @@ tasks:
     - task: test:unit
 
   test:unit: '{{ .GOCMD_TEST }}'
-  test:unit-nocache: '{{ .GOCMD_TEST }} {{ .FLAG_NOCACHE }}'
-  test:integration: '{{ .GOCMD_TEST }} {{ .FLAG_INTEGRATION }}'
-  test:integration-nocache: '{{ .GOCMD_TEST }} {{ .FLAG_INTEGRATION }} {{ .FLAG_NOCACHE }}'
+  test:unit-nocache: '{{ .GOCMD_TEST_NOCACHE }}'
+  test:integration: '{{ .GOCMD_TEST_INTEGRATION }}'
+  test:integration-nocache: '{{ .GOCMD_TEST_INTEGRATION_NOCACHE }}'
+
+  test:coverprofile:
+    sources:
+      - '**/*.go'
+    generates:
+      - '{{.COVERPROFILE}}'
+    cmds:
+      - go test ./... -coverprofile {{.COVERPROFILE}}
+
+  test:uncover:
+    deps:
+      - test:coverprofile
+    cmds:
+      - go run rsc.io/uncover@{{.V_UNCOVER}} {{.COVERPROFILE}}
 
   install: go install ./cmd/...
 
@@ -25,4 +46,6 @@ tasks:
     - go get -u ./...
     - go mod tidy
 
-  docs: go run golang.org/x/pkgsite/cmd/pkgsite@latest
+  docs: go run golang.org/x/pkgsite/cmd/pkgsite@{{.V_PKGSITE}}
+
+  clean: rm -f {{.COVERPROFILE}}
