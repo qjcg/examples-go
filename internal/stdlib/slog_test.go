@@ -1,4 +1,4 @@
-package slog
+package stdlib
 
 import (
 	"bytes"
