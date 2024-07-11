@@ -3,3 +3,5 @@ out/
 *.sqlite
 .env
 internal/playwright/*.png
+c.out
+.task
