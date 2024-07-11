@@ -9,6 +9,9 @@ import (
 	"log"
 	"net/http"
 	"strings"
+
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 // greetResponse represents the data returned as a JSON response.
@@ -27,7 +30,8 @@ func main() {
 }
 
 func handleIndex(w http.ResponseWriter, r *http.Request) {
-	name := strings.Title(strings.Trim(html.EscapeString(r.URL.Path), "/"))
+	caser := cases.Title(language.English)
+	name := caser.String(strings.Trim(html.EscapeString(r.URL.Path), "/"))
 	greeting := fmt.Sprintf("Hello, %s!", name)
 	if name == "" {
 		greeting = "Hello!"

@@ -1,9 +1,8 @@
 package main
 
 import (
-	_ "embed"
-
 	"bytes"
+	_ "embed"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -47,4 +46,6 @@ func TestPrintThumbnailURLs(t *testing.T) {
 	if !REImgurURL.Match(out) {
 		t.Fatalf("No imgur URL match in %#v", out)
 	}
+
+	t.Log(buf.String())
 }
