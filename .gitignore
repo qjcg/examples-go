@@ -5,3 +5,4 @@ out/
 internal/playwright/*.png
 c.out
 .task
+thirdparty/playwright/*.png
