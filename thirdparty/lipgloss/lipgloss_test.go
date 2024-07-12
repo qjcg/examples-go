@@ -5,8 +5,8 @@ import (
 	"testing"
 
 	"github.com/charmbracelet/lipgloss"
+	"github.com/charmbracelet/lipgloss/list"
 	"github.com/charmbracelet/lipgloss/table"
-	"github.com/charmbracelet/lipgloss/tree"
 )
 
 func TestStyle(t *testing.T) {
@@ -102,25 +102,20 @@ func TestTable(t *testing.T) {
 	t.Logf("\n%v", tb)
 }
 
-func TestTree(t *testing.T) {
-	tr := tree.New().
-		Root("root").
-		Child(
-			"child 1",
-			"child 2",
-			tree.Root("child 3").
-				Child("child 3.1"),
-		)
+func TestList(t *testing.T) {
+	got := list.New(
+		"root",
+		list.New(
+			"child1",
+			"child2",
+			list.New(
+				"child 3",
+				list.New(
+					"child 3.1",
+				),
+			),
+		),
+	)
 
-	want := `root
-├── child 1
-├── child 2
-└── child 3
-    └── child 3.1
-`
-	got := tr.String()
-
-	if got != want {
-		t.Logf("want\n%v got\n%v", want, got)
-	}
+	t.Log(got)
 }
