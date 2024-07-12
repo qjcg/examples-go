@@ -1,5 +1,5 @@
 // GENERATED CODE, DO NOT EDIT
 
-package stdlib
+package generate
 
 const generatedAnswer = 38

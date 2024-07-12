@@ -1,6 +1,6 @@
 //go:build ignore
 
-package main
+package generate
 
 import (
 	"log"
@@ -12,7 +12,7 @@ import (
 func main() {
 	dataTemplate := `// GENERATED CODE, DO NOT EDIT
 
-package stdlib
+package generate
 
 const generatedAnswer = {{.Answer}}
 `

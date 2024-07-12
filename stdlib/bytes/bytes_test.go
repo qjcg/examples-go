@@ -1,11 +1,11 @@
-package stdlib
+package bytes
 
 import (
 	"bytes"
 	"testing"
 )
 
-func TestBufferWriteString(t *testing.T) {
+func TestBuffer_WriteString(t *testing.T) {
 	f := func(s string) {
 		t.Helper()
 
@@ -18,8 +18,6 @@ func TestBufferWriteString(t *testing.T) {
 		if want != got {
 			t.Fatalf("want %q got %q", want, got)
 		}
-
-		t.Logf("buffer contents: %q", got)
 	}
 
 	f("")
