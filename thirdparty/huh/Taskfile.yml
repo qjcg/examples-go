@@ -6,4 +6,4 @@ tasks:
   default:
     - task: test
 
-  test: go test -tags e2e -v
+  test: go test -tags interactive -v
