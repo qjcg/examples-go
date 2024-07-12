@@ -36,7 +36,7 @@ func newNATSContainer(ctx context.Context) (testcontainers.Container, error) {
 	})
 }
 
-func TestPubSub(t *testing.T) {
+func TestPubSub_testcontainer(t *testing.T) {
 	ctx := context.Background()
 	natsContainer, err := tcNATS.Run(ctx, "nats:2.10-alpine")
 	if err != nil {
