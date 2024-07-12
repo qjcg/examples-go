@@ -1,41 +1,46 @@
 package nats
 
 import (
-	"log"
 	"testing"
-	"time"
 
-	"github.com/nats-io/nats-server/v2/server"
 	"github.com/nats-io/nats.go"
 )
 
 // See https://github.com/synadia-io/rethink_connectivity/blob/main/20-embedding-nats-server/main.go
 func TestInProcessConn(t *testing.T) {
-	serverOpts := server.Options{
-		DontListen: true,
-		JetStream:  true,
-		StoreDir:   t.TempDir(),
-	}
-
-	ns, err := server.NewServer(&serverOpts)
+	nc, ns, err := RunEmbeddedServer(true)
 	if err != nil {
 		t.Fatal(err)
 	}
-	go ns.Start()
+	defer nc.Close()
+	defer ns.Shutdown()
 
-	if !ns.ReadyForConnections(5 * time.Second) {
-		t.Fatal("timeout waiting for nats server to be ready for connections")
+	if !nc.IsConnected() {
+		t.Fatal("client is not connected to nats-server")
 	}
+}
 
-	nc, err := nats.Connect(nats.DefaultURL, nats.InProcessServer(ns))
+func TestPubSub(t *testing.T) {
+	nc, ns, err := RunEmbeddedServer(true)
 	if err != nil {
 		t.Fatal(err)
 	}
+	defer nc.Close()
+	defer ns.Shutdown()
 
-	nc.Subscribe("hello", func(msg *nats.Msg) {
-		log.Println("message received!")
-		msg.Respond([]byte("Ahoy there!"))
+	_, err = nc.Subscribe("greetings", func(msg *nats.Msg) {
+		t.Log("message received!")
+		err := msg.Respond([]byte("Ahoy there!"))
+		if err != nil {
+			t.Log(err)
+		}
 	})
+	if err != nil {
+		t.Fatal(err)
+	}
 
-	ns.WaitForShutdown()
+	err = nc.Publish("greetings", []byte("hello there!"))
+	if err != nil {
+		t.Fatal(err)
+	}
 }
