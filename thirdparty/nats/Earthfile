@@ -29,31 +29,112 @@ test-base:
 #   - 3x users in each account with preferred settings
 testdata:
 	FROM +test-base
+
 	ARG operator = foocorp
+	ARG server_url = nats://127.0.0.1:4222
 	ARG account1 = team_alfa
 	ARG account2 = team_bravo
-	LET config_file = resolver.conf
+	ARG a1_user1 = foo
+	ARG a1_user2 = bar
+	ARG a1_user3 = baz
+	ARG a2_user1 = foo
+	ARG a2_user2 = bar
+	ARG a2_user3 = baz
 
-	DO +CREATE_OPERATOR --name=$operator
+	# Create an Operator.
+	RUN nsc create operator $operator \
+	    --generate-signing-key \
+	    --sys
+	RUN nsc edit operator \
+	    --account-jwt-server-url $server_url \
+	    --require-signing-keys \
+	    --tag status:awesome,region:us-east
 
-	DO +CREATE_ACCOUNT --operator=$operator --account=$account1
-	DO +CREATE_ACCOUNT_SK --account=$account1 --sk_args='--role chat_user --allow-pub "chat.post.{{tag(org)}}.{{name()}}" --allow-sub "chat.post.{{tag(org)}}.*" --allow-pub-response'
-	DO +EDIT_ACCOUNT --account=$account1
+	# Get the Operator's signing-key.
+	LET operator_sk = $(nsc describe operator $operator --json | jq -r '.nats.signing_keys[0]')
 
-	DO +CREATE_ACCOUNT --operator=$operator --account=$account2
-	DO +CREATE_ACCOUNT_SK --account=$account2 --sk_args='--role webapp_user --allow-pub "webapp.post.{{tag(org)}}.{{name()}}" --allow-sub "webapp.post.{{tag(org)}}.*" --allow-pub-response'
-	DO +EDIT_ACCOUNT --account=$account2
+	# Create Account1 using the Operator's signing-key.
+	# Add metadata and configuration settings to the Account.
+	RUN nsc create account $account1 -K $operator_sk
+	RUN nsc edit account $account1 \
+	    --description "The $account1 Team at $operator" \
+	    --info-url "https://$operator.com/$account1" \
+	    --data 5G \
+	    --expiry 1y \
+	    --js-disk-storage 50G \
+	    --js-mem-storage 2G \
+	    --js-tier 3 \
+	    --tag status:awesome,az:us-east
 
-	DO +EXPORT
-	DO +GENERATE_CONFIG
-	DO +GENERATE_CREDS
-	DO +LIST
+	# Create Account2 using the Operator's signing-key.
+	# Add metadata and configuration settings to the Account.
+	RUN nsc create account $account2 -K $operator_sk
+	RUN nsc edit account $account2 \
+	    --description "The $account2 Team at $operator" \
+	    --info-url "https://$operator.com/$account2" \
+	    --data 5G \
+	    --expiry 1y \
+	    --js-disk-storage 50G \
+	    --js-mem-storage 2G \
+	    --js-tier 3 \
+	    --tag status:awesome,az:us-east
+
+	# Create a signing-key for Account1.
+	# Add a role name and permissions to the signing-key.
+	RUN nsc edit account -n $account1 --sk generate
+	LET account1_sk = $(nsc describe account $account1 --json | jq -r '.nats.signing_keys[0]')
+	RUN nsc edit signing-key \
+	    --account $account1 \
+	    --sk $account1_sk \
+	    --data 4G \
+	    --conn-type STANDARD,WEBSOCKET \
+	    --role chat_user \
+	    --allow-pub "chat.post.{{tag(org)}}.{{name()}}" \
+	    --allow-sub "chat.post.{{tag(org)}}.*" \
+	    --allow-pubsub 'greetings.>' \
+	    --allow-pub-response
+
+	# Create a signing-key for Account2.
+	# Add a role name and permissions to the signing-key.
+	RUN nsc edit account -n $account2 --sk generate
+	LET account2_sk = $(nsc describe account $account2 --json | jq -r '.nats.signing_keys[0]')
+	RUN nsc edit signing-key \
+	    --account $account2 \
+	    --sk $account2_sk \
+	    --data 4G \
+	    --conn-type STANDARD,WEBSOCKET \
+	    --role chat_user \
+	    --allow-pub "chat.post.{{tag(org)}}.{{name()}}" \
+	    --allow-sub "chat.post.{{tag(org)}}.*" \
+	    --allow-pubsub 'greetings.>' \
+	    --allow-pub-response
+
+	# Create Account1 Users using scoped signing-key.
+ 	RUN nsc create user $a1_user1 --account $account1 --private-key $account1_sk
+ 	RUN nsc create user $a1_user2 --account $account1 --private-key $account1_sk
+ 	RUN nsc create user $a1_user3 --account $account1 --private-key $account1_sk
+
+	# Create Account2 Users using scoped signing-key.
+ 	RUN nsc create user $a2_user1 --account $account2 --private-key $account2_sk
+ 	RUN nsc create user $a2_user2 --account $account2 --private-key $account2_sk
+ 	RUN nsc create user $a2_user3 --account $account2 --private-key $account2_sk
+
+	# Generate nats-server resolver config file.
+	RUN nsc generate config --nats-resolver --config-file resolver.conf
+
+	# Export all nkeys and JWTs.
+	RUN nsc export keys --all --dir exports --include-jwts
+
 	SAVE ARTIFACT exports AS LOCAL testdata/exports
-	SAVE ARTIFACT $config_file AS LOCAL testdata/$config_file
+	SAVE ARTIFACT resolver.conf AS LOCAL testdata/resolver.conf
 
 dev:
 	FROM +testdata
 	RUN --interactive /bin/bash --login
+
+clean:
+	LOCALLY
+	RUN rm -rf testdata
 
 CREATE_OPERATOR:
 	FUNCTION
@@ -133,113 +214,19 @@ IMPORT:
 	RUN for u in ./$dir/U*.jwt ; do nsc import user --file $u ; done
 	RUN nsc import keys --dir $dir
 
-test-create-account-with-limits:
-	FROM +test-base
-	LET operator = foocorp
-	LET account = devteam
-	LET info_url = https://foocorp.com/devteam
-	LET dir = exports
-	LET dir_local = exports/create-account-with-limits
-	RUN nsc create operator $operator --generate-signing-key
-	LET sk = $(nsc describe operator $operator --json | jq -r '.nats.signing_keys[0]')
-	RUN nsc create account $account -K $sk
-	RUN nsc edit account $account \
-	    --description 'The dev. team at FooCorp' \
-	    --info-url $info_url \
-	    --data 5G \
-	    --expiry 1y \
-	    --js-disk-storage 50G \
-	    --js-mem-storage 2G \
-	    --js-tier 3 \
-	    --tag status:awesome,az:us-east
-	RUN nsc describe account $account --json | jq --exit-status '
-	    .iss == env.sk
-	    and .nats.info_url == env.info_url
-	'
-	RUN nsc export keys --all --dir $dir --include-jwts
-	SAVE ARTIFACT $dir AS LOCAL $dir_local
+REPORT:
+	FUNCTION
 
-######################################################################
-# USER
+	LET out = report.md
 
-test-create-user:
-	FROM +test-base
-	LET operator = foocorp
-	LET account = devteam
-	LET user = xanadu
-	RUN nsc create operator $operator
-	RUN nsc create account $account
-	RUN nsc create user $user
-	RUN nsc describe user $name
+	RUN echo 'nsc list keys --all' >> $out
+	RUN nsc list keys --all >> $out 2>&1
+	RUN echo 'nsc describe operator' >> $out
+	RUN nsc describe operator >> $out 2>&1
+	RUN echo 'nsc describe account --name SYS' >> $out
+	RUN nsc describe account --name SYS >> $out 2>&1
 
-test-create-user-from-signing-key:
-	FROM +test-base
-	LET operator = foocorp
-	LET account = devteam
-	LET user = xanadu
-	RUN nsc create operator $operator
-	RUN nsc create account $account
-	RUN nsc edit account $account --sk generate
-	LET sk = $(nsc describe account $account --json | jq -r '.nats.signing_keys[0]')
-	RUN nsc create user $user -K $sk
-	RUN nsc describe user $user --json | jq --exit-status '.iss == env.sk'
-
-test-create-user-from-signing-key-with-limits:
-	FROM +test-base
-	LET operator = foocorp
-	LET account = devteam
-	LET user = xanadu
-	LET role = editor
-	LET url = nats://nats:4222
-	RUN nsc create operator $operator --sys
-	RUN nsc edit operator --service-url $url
-	RUN nsc create account $account
-	RUN nsc edit account $account --sk generate
-	LET sk = $(nsc describe account $account --json | jq -r '.nats.signing_keys[0]')
-	RUN nsc edit signing-key \
-	    --sk $sk \
-	    --role $role \
-	    --data 4G \
-	    --conn-type STANDARD,WEBSOCKET \
-	    --allow-pubsub 'hello.>'
-	RUN nsc create user $user -K $sk
-	RUN nsc describe user $user --json | jq --exit-status '.iss == env.sk'
-	RUN nsc describe account $account --json | jq --exit-status '
-	    .nats.signing_keys[0].role == env.role
-	    and .nats.signing_keys[0].template.data == 4000000000
-	    and (.nats.signing_keys[0].template.allowed_connection_types | contains(["STANDARD", "WEBSOCKET"]))
-	    and .nats.signing_keys[0].template.pub.allow[0] == "hello.>"
-	    and .nats.signing_keys[0].template.sub.allow[0] == "hello.>"
-	    '
-
-test-create-user-from-signing-key-with-limits-integration:
-	FROM +test-create-user-from-signing-key-with-limits
-	LET export_dir = exports
-	ARG export_dir_local = exports/create-user-from-signing-key-with-limits-integration
-	LET resolver_config_file = resolver.conf
-	ARG account = devteam
-	ARG user = xanadu
-	RUN nsc export keys --all --include-jwts --dir $export_dir
-	RUN nsc generate creds -a $account -n $user -o $user.creds
-	RUN nsc generate config --nats-resolver --config-file $resolver_config_file
-	RUN nats context save $user --creds ./$user.creds --select
-	SAVE ARTIFACT $export_dir AS LOCAL $export_dir_local
-	SAVE ARTIFACT $user.creds AS LOCAL $export_dir_local
-	SAVE ARTIFACT $resolver_config_file AS LOCAL $export_dir_local
-	SAVE IMAGE qjcg/nats-integration:latest
-
-test-export-keys-and-jwts:
-	FROM +test-base
-	LET name = foo
-	LET dir = exports
-	RUN nsc init --name $name
-	RUN nsc export keys --all --dir $dir --include-jwts
-	LET num_nkeys = $(ls $dir/*.nk | wc -l)
-	LET num_jwts = $(ls $dir/*.jwt | wc -l)
-	SAVE ARTIFACT $dir
-
-
-
+	SAVE ARTIFACT $out
 
 TEST_SCOPED_SIGNING_KEY:
 	FUNCTION
@@ -280,47 +267,6 @@ TEST_SCOPED_SIGNING_KEY:
 	    --allow-pub "chat.dm.{{tag(org)}}.{{name()}}.*" \
 	    --allow-sub "chat.dm.{{tag(org)}}.*.{{name()}}"
 
-dev-ssk:
-	ARG OPERATOR = foocorp
-	ARG ACCOUNT = devteam
-	ARG USER1 = bob
-	ARG USER2 = alice
-
-	FROM $nats_box
-	WORKDIR /work
-	DO +TEST_SCOPED_SIGNING_KEY --OPERATOR $OPERATOR --ACCOUNT $ACCOUNT --USER1 $USER1 --USER2 $USER2
-	RUN --interactive /bin/sh --login
-
-REPORT:
-	FUNCTION
-
-	LET out = report.md
-
-	RUN echo 'nsc list keys --all' >> $out
-	RUN nsc list keys --all >> $out 2>&1
-	RUN echo 'nsc describe operator' >> $out
-	RUN nsc describe operator >> $out 2>&1
-	RUN echo 'nsc describe account --name SYS' >> $out
-	RUN nsc describe account --name SYS >> $out 2>&1
-
-	SAVE ARTIFACT $out
-
-TEST:
-	FUNCTION
-
-	ARG OPERATOR = foocorp
-	ARG ACCOUNT = devteam
-	ARG USER = xanadu
-
-	DO +CREATE_ALL --OPERATOR $OPERATOR --ACCOUNT $ACCOUNT --USER $USER
-	DO +GENERATE_CONFIG
-	DO +EXPORT
-	DO +GENERATE_CREDS
-	DO +GENERATE_CREDS --ACCOUNT $ACCOUNT --USER $USER
-	DO +LIST
-	DO +IMPORT
-	DO +REPORT
-
 import-alpine:
 	FROM $alpine
 	ARG export_dir = exports
@@ -347,25 +293,19 @@ import-ubuntu:
 
 	RUN --interactive /bin/bash --login
 
-
-# test runs all unit tests
-test:
-	BUILD +test-create-operator
-	BUILD +test-create-operator-with-system-account-and-user
-	BUILD +test-create-operator-with-signing-key
-	BUILD +test-create-operator-and-require-signing-keys
-	BUILD +test-create-operator-with-jwt-server-url
-	BUILD +test-create-operator-with-preferred-settings
-
-	BUILD +test-create-account
-	BUILD +test-create-account-from-signing-key
-	BUILD +test-create-account-from-signing-key-with-operator-tags
-	BUILD +test-create-account-with-limits
-
-	BUILD +test-create-user
-	BUILD +test-create-user-from-signing-key
-	BUILD +test-create-user-from-signing-key-with-limits
-	#BUILD +test-create-user-from-signing-key-with-limits-integration
-
-	BUILD +test-export-keys
-	BUILD +test-export-keys-and-jwts
+# TODO: Extract generate creds logic and delete.
+test-create-user-from-signing-key-with-limits-integration:
+	FROM +test-create-user-from-signing-key-with-limits
+	LET export_dir = exports
+	ARG export_dir_local = exports/create-user-from-signing-key-with-limits-integration
+	LET resolver_config_file = resolver.conf
+	ARG account = devteam
+	ARG user = xanadu
+	RUN nsc export keys --all --include-jwts --dir $export_dir
+	RUN nsc generate creds -a $account -n $user -o $user.creds
+	RUN nsc generate config --nats-resolver --config-file $resolver_config_file
+	RUN nats context save $user --creds ./$user.creds --select
+	SAVE ARTIFACT $export_dir AS LOCAL $export_dir_local
+	SAVE ARTIFACT $user.creds AS LOCAL $export_dir_local
+	SAVE ARTIFACT $resolver_config_file AS LOCAL $export_dir_local
+	SAVE IMAGE qjcg/nats-integration:latest
