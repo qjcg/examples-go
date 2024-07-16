@@ -50,6 +50,9 @@ testdata:
 	    --require-signing-keys \
 	    --tag status:awesome,region:us-east
 
+	# Generate nats-server resolver config file.
+	RUN nsc generate config --nats-resolver --config-file resolver.conf
+
 	# Get the Operator's signing-key.
 	LET operator_sk = $(nsc describe operator $operator --json | jq -r '.nats.signing_keys[0]')
 
@@ -109,23 +112,24 @@ testdata:
 	    --allow-pubsub 'greetings.>' \
 	    --allow-pub-response
 
-	# Create Account1 Users using scoped signing-key.
- 	RUN nsc create user $a1_user1 --account $account1 --private-key $account1_sk
- 	RUN nsc create user $a1_user2 --account $account1 --private-key $account1_sk
- 	RUN nsc create user $a1_user3 --account $account1 --private-key $account1_sk
+        # Create Account Users using scoped signing-keys and generate creds files.
+        LET a1u = ""
+        LET a2u = ""
+        FOR i IN 1 2 3
+          SET a1u = $(eval "echo $a1_user${i}")
+          RUN nsc create user $a1u --account $account1 --private-key $account1_sk
+          RUN nsc generate creds -a $account1 -n $a1u -o ${account1}_${a1u}.creds
 
-	# Create Account2 Users using scoped signing-key.
- 	RUN nsc create user $a2_user1 --account $account2 --private-key $account2_sk
- 	RUN nsc create user $a2_user2 --account $account2 --private-key $account2_sk
- 	RUN nsc create user $a2_user3 --account $account2 --private-key $account2_sk
-
-	# Generate nats-server resolver config file.
-	RUN nsc generate config --nats-resolver --config-file resolver.conf
+          SET a2u = $(eval "echo $a2_user${i}")
+          RUN nsc create user $a2u --account $account2 --private-key $account2_sk
+          RUN nsc generate creds -a $account2 -n $a2u -o ${account2}_${a2u}.creds
+        END
 
 	# Export all nkeys and JWTs.
 	RUN nsc export keys --all --dir exports --include-jwts
 
 	SAVE ARTIFACT exports AS LOCAL testdata/exports
+	SAVE ARTIFACT *.creds AS LOCAL testdata/creds/
 	SAVE ARTIFACT resolver.conf AS LOCAL testdata/resolver.conf
 
 dev:
