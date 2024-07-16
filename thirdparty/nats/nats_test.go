@@ -9,7 +9,6 @@ import (
 	"github.com/nats-io/nats.go/micro"
 )
 
-// See https://github.com/synadia-io/rethink_connectivity/blob/main/20-embedding-nats-server/main.go
 func TestInProcessConn(t *testing.T) {
 	nc, ns, err := RunEmbeddedServer(true)
 	if err != nil {

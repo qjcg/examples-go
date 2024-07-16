@@ -1,0 +1,421 @@
+VERSION 0.8
+
+# TODO: Create `testdata-keys` target that provides
+#   - 1x operator with preferred settings
+#   - 1x system account and user
+#   - 2x accounts with preferred settings
+#   - 3x users in each account with preferred settings
+
+ARG --global nats_box = natsio/nats-box:0.14.3
+ARG --global alpine = alpine:3
+ARG --global ubuntu = ubuntu:noble
+ARG --global dind = earthly/dind:alpine-3.20-docker-26.1.3-r1
+ARG --global img_golang = golang:1.22-alpine
+
+test-base:
+	FROM $img_golang
+	RUN apk add --no-cache bash curl jq tmux
+	ENV CGO_ENABLED=0
+	LET flags = -ldflags='-s'
+	RUN go install $flags github.com/nats-io/natscli/nats@3f6d70ab5c7c079a2ce3606b155fcc5a4e65925f
+	RUN go install $flags github.com/nats-io/nkeys/nk@v0.4.7
+	RUN go install $flags github.com/nats-io/nsc/v2@1989e956430d7f8dbfdb58504e013d1818bf994a
+	RUN go install $flags github.com/nats-io/nats-server/v2@v2.10.17
+	RUN echo 'export PATH=/go/bin:/usr/local/go/bin:$PATH' >> ~/.bash_profile
+	WORKDIR /work
+	SAVE ARTIFACT /go/bin/*
+
+######################################################################
+# OPERATOR
+
+test-create-operator:
+	FROM +test-base
+	LET name = foocorp
+	RUN nsc create operator $name
+	RUN nsc describe operator $name
+
+test-create-operator-with-system-account-and-user:
+	FROM +test-base
+	LET name = foocorp
+	RUN nsc create operator $name --sys
+	RUN nsc describe operator $name --json | jq --exit-status '.nats.system_account'
+	RUN nsc describe account SYS
+	RUN nsc describe user sys
+
+test-create-operator-with-signing-key:
+	FROM +test-base
+	LET name = foocorp
+	RUN nsc create operator $name --generate-signing-key
+	RUN nsc describe operator $name --json | jq --exit-status '.nats.signing_keys | length == 1'
+
+test-create-operator-and-require-signing-keys:
+	FROM +test-base
+	LET name = foocorp
+	RUN nsc create operator $name --generate-signing-key
+	RUN nsc edit operator --require-signing-keys
+	RUN nsc describe operator $name --json | jq --exit-status '.nats.strict_signing_key_usage == true'
+
+test-create-operator-with-jwt-server-url:
+	FROM +test-base
+	LET name = foocorp
+	LET url = nats://example.com:4222
+	RUN nsc create operator $name
+	RUN nsc edit operator --account-jwt-server-url $url
+	RUN nsc describe operator $name --json | jq --exit-status '.nats.account_server_url == env.url'
+
+test-create-operator-with-preferred-settings:
+	FROM +test-base
+	ARG name = foocorp
+	ARG url = nats://foocorp.com:4222
+	LET dir = exports
+	ARG dir_local = exports/create-operator-with-preferred-settings
+
+	RUN nsc create operator $name \
+	    --generate-signing-key \
+	    --sys
+
+	RUN nsc edit operator \
+	    --require-signing-keys \
+	    --account-jwt-server-url $url
+
+	RUN nsc export keys --all --dir $dir --include-jwts
+	SAVE ARTIFACT $dir AS LOCAL $dir_local
+
+
+######################################################################
+# ACCOUNT
+
+test-create-account:
+	FROM +test-base
+	LET operator = foocorp
+	LET account = devteam
+	RUN nsc create operator $operator
+	RUN nsc create account $account
+	RUN nsc describe account $account
+
+test-create-account-from-signing-key:
+	FROM +test-base
+	LET operator = foocorp
+	LET account = devteam
+	RUN nsc create operator $operator --generate-signing-key
+	LET sk = $(nsc describe operator $operator --json | jq -r '.nats.signing_keys[0]')
+	RUN nsc create account $account -K $sk
+	RUN nsc describe account $account --json | jq --exit-status '.iss == env.sk'
+
+test-create-account-from-signing-key-with-operator-tags:
+	FROM +test-base
+	LET operator = foocorp
+	LET account = devteam
+	LET tags = status:awesome,region:us-east
+	RUN nsc create operator $operator --generate-signing-key
+	RUN nsc edit operator --tag $tags
+	LET sk = $(nsc describe operator $operator --json | jq -r '.nats.signing_keys[0]')
+	RUN nsc create account $account -K $sk
+	RUN nsc describe account $account --json | jq --exit-status '.iss == env.sk'
+
+test-create-account-with-limits:
+	FROM +test-base
+	LET operator = foocorp
+	LET account = devteam
+	LET info_url = https://foocorp.com/devteam
+	LET dir = exports
+	LET dir_local = exports/create-account-with-limits
+	RUN nsc create operator $operator --generate-signing-key
+	LET sk = $(nsc describe operator $operator --json | jq -r '.nats.signing_keys[0]')
+	RUN nsc create account $account -K $sk
+	RUN nsc edit account $account \
+	    --description 'The dev. team at FooCorp' \
+	    --info-url $info_url \
+	    --data 5G \
+	    --expiry 1y \
+	    --js-disk-storage 50G \
+	    --js-mem-storage 2G \
+	    --js-tier 3 \
+	    --tag status:awesome,az:us-east
+	RUN nsc describe account $account --json | jq --exit-status '
+	    .iss == env.sk
+	    and .nats.info_url == env.info_url
+	'
+	RUN nsc export keys --all --dir $dir --include-jwts
+	SAVE ARTIFACT $dir AS LOCAL $dir_local
+
+######################################################################
+# USER
+
+test-create-user:
+	FROM +test-base
+	LET operator = foocorp
+	LET account = devteam
+	LET user = xanadu
+	RUN nsc create operator $operator
+	RUN nsc create account $account
+	RUN nsc create user $user
+	RUN nsc describe user $name
+
+test-create-user-from-signing-key:
+	FROM +test-base
+	LET operator = foocorp
+	LET account = devteam
+	LET user = xanadu
+	RUN nsc create operator $operator
+	RUN nsc create account $account
+	RUN nsc edit account $account --sk generate
+	LET sk = $(nsc describe account $account --json | jq -r '.nats.signing_keys[0]')
+	RUN nsc create user $user -K $sk
+	RUN nsc describe user $user --json | jq --exit-status '.iss == env.sk'
+
+test-create-user-from-signing-key-with-limits:
+	FROM +test-base
+	LET operator = foocorp
+	LET account = devteam
+	LET user = xanadu
+	LET role = editor
+	LET url = nats://nats:4222
+	RUN nsc create operator $operator --sys
+	RUN nsc edit operator --service-url $url
+	RUN nsc create account $account
+	RUN nsc edit account $account --sk generate
+	LET sk = $(nsc describe account $account --json | jq -r '.nats.signing_keys[0]')
+	RUN nsc edit signing-key \
+	    --sk $sk \
+	    --role $role \
+	    --data 4G \
+	    --conn-type STANDARD,WEBSOCKET \
+	    --allow-pubsub 'hello.>'
+	RUN nsc create user $user -K $sk
+	RUN nsc describe user $user --json | jq --exit-status '.iss == env.sk'
+	RUN nsc describe account $account --json | jq --exit-status '
+	    .nats.signing_keys[0].role == env.role
+	    and .nats.signing_keys[0].template.data == 4000000000
+	    and (.nats.signing_keys[0].template.allowed_connection_types | contains(["STANDARD", "WEBSOCKET"]))
+	    and .nats.signing_keys[0].template.pub.allow[0] == "hello.>"
+	    and .nats.signing_keys[0].template.sub.allow[0] == "hello.>"
+	    '
+
+test-create-user-from-signing-key-with-limits-integration:
+	FROM +test-create-user-from-signing-key-with-limits
+	LET export_dir = exports
+	ARG export_dir_local = exports/create-user-from-signing-key-with-limits-integration
+	LET resolver_config_file = resolver.conf
+	ARG account = devteam
+	ARG user = xanadu
+	RUN nsc export keys --all --include-jwts --dir $export_dir
+	RUN nsc generate creds -a $account -n $user -o $user.creds
+	RUN nsc generate config --nats-resolver --config-file $resolver_config_file
+	RUN nats context save $user --creds ./$user.creds --select
+	SAVE ARTIFACT $export_dir AS LOCAL $export_dir_local
+	SAVE ARTIFACT $user.creds AS LOCAL $export_dir_local
+	SAVE ARTIFACT $resolver_config_file AS LOCAL $export_dir_local
+	SAVE IMAGE qjcg/nats-integration:latest
+
+
+test-export-keys:
+	FROM +test-base
+	LET name = foo
+	LET dir = exports
+	RUN nsc init --name $name
+	RUN nsc export keys --all --dir $dir
+	LET num_nkeys = $(ls $dir/*.nk | wc -l)
+	# 1 operator key
+	# 3 account keys (SYS, SYS signing key, and $name)
+	# 2 users (sys and $name)
+	RUN test $num_nkeys -eq 6
+	SAVE ARTIFACT $dir
+
+test-export-keys-and-jwts:
+	FROM +test-base
+	LET name = foo
+	LET dir = exports
+	RUN nsc init --name $name
+	RUN nsc export keys --all --dir $dir --include-jwts
+	LET num_nkeys = $(ls $dir/*.nk | wc -l)
+	LET num_jwts = $(ls $dir/*.jwt | wc -l)
+	SAVE ARTIFACT $dir
+
+IMPORT:
+	FUNCTION
+	ARG DIR = to_import
+
+	COPY --dir $DIR .
+	RUN nsc add operator --url ./$DIR/O*.jwt
+	RUN for a in ./$DIR/A*.jwt ; do nsc import account --file $a ; done
+	RUN for u in ./$DIR/U*.jwt ; do nsc import user --file $u ; done
+	RUN nsc import keys --dir $DIR
+
+GENERATE_CREDS:
+	FUNCTION
+	ARG ACCOUNT = SYS
+	ARG USER = sys
+
+	RUN nsc generate creds --account $ACCOUNT --name $USER --output-file $USER.creds
+	SAVE ARTIFACT $USER.creds
+
+GENERATE_CONFIG:
+	FUNCTION
+
+	ARG FILENAME = resolver.conf
+	RUN nsc generate config --nats-resolver --config-file $FILENAME
+	SAVE ARTIFACT $FILENAME
+
+# list lists all operators and keys for a given operator.
+LIST:
+	FUNCTION
+
+	RUN nsc list operators
+	RUN nsc list keys --all
+
+TEST_SCOPED_SIGNING_KEY:
+	FUNCTION
+
+	ARG OPERATOR = foocorp
+	ARG ACCOUNT = devteam
+	ARG USER1 = bob
+	ARG USER2 = alice
+
+	# Create a new Operator and Account.
+	DO +CREATE_OPERATOR --NAME=$OPERATOR
+	DO +CREATE_ACCOUNT --NAME=$ACCOUNT
+
+	# Add a signing key to the Account.
+	RUN nsc edit account -n $ACCOUNT --sk generate
+	LET sk1 = $(nsc describe account -n $ACCOUNT -J | jq -r '.nats.signing_keys[0]')
+
+	# Give the signing key a role name and set some permissions on it.
+	RUN nsc edit signing-key \
+	    	--sk $sk1 \
+		--role chat_user \
+	    	--allow-pub "chat.post.{{tag(org)}}.{{name()}}" \
+	        --allow-sub "chat.post.{{tag(org)}}.*" \
+		--allow-pub-response
+
+	# Create Users using the signing key.
+	DO +CREATE_USER --NAME=$USER1 --KEY=$sk1
+	DO +CREATE_USER --NAME=$USER2 --KEY=$sk1
+
+	# Read permissions set on a User.
+	RUN nsc describe user $USER1
+
+	# Update permissions on a signing key.
+	# After pushing this key to nats-server, permissions will be updated for all Users signed with this key.
+	# No need to distribute any new keys to Users!
+	RUN nsc edit signing-key \
+	    --sk $sk1 \
+	    --allow-pub "chat.dm.{{tag(org)}}.{{name()}}.*" \
+	    --allow-sub "chat.dm.{{tag(org)}}.*.{{name()}}"
+
+dev-ssk:
+	ARG OPERATOR = foocorp
+	ARG ACCOUNT = devteam
+	ARG USER1 = bob
+	ARG USER2 = alice
+
+	FROM $nats_box
+	WORKDIR /work
+	DO +TEST_SCOPED_SIGNING_KEY --OPERATOR $OPERATOR --ACCOUNT $ACCOUNT --USER1 $USER1 --USER2 $USER2
+	RUN --interactive /bin/sh --login
+
+REPORT:
+	FUNCTION
+
+	LET out = report.md
+
+	RUN echo 'nsc list keys --all' >> $out
+	RUN nsc list keys --all >> $out 2>&1
+	RUN echo 'nsc describe operator' >> $out
+	RUN nsc describe operator >> $out 2>&1
+	RUN echo 'nsc describe account --name SYS' >> $out
+	RUN nsc describe account --name SYS >> $out 2>&1
+
+	SAVE ARTIFACT $out
+
+TEST:
+	FUNCTION
+
+	ARG OPERATOR = foocorp
+	ARG ACCOUNT = devteam
+	ARG USER = xanadu
+
+	DO +CREATE_ALL --OPERATOR $OPERATOR --ACCOUNT $ACCOUNT --USER $USER
+	DO +GENERATE_CONFIG
+	DO +EXPORT
+	DO +GENERATE_CREDS
+	DO +GENERATE_CREDS --ACCOUNT $ACCOUNT --USER $USER
+	DO +LIST
+	DO +IMPORT
+	DO +REPORT
+
+example:
+	ARG OPERATOR = foocorp
+	ARG ACCOUNT = devteam
+	ARG USER = xanadu
+
+	FROM $nats_box
+	WORKDIR /work
+	DO +TEST --OPERATOR $OPERATOR --ACCOUNT $ACCOUNT --USER $USER
+
+dev:
+	ARG OPERATOR = foocorp
+	ARG ACCOUNT = devteam
+	ARG USER = xanadu
+
+	FROM $nats_box
+	WORKDIR /work
+	DO +TEST --OPERATOR $OPERATOR --ACCOUNT $ACCOUNT --USER $USER
+	RUN --interactive /bin/sh --login
+
+import-alpine:
+	FROM $alpine
+	ARG export_dir = exports
+	WORKDIR /work
+	COPY +test-base/nsc /usr/local/bin
+	COPY --dir +test-export-keys-and-jwts/$export_dir .
+	RUN nsc add operator --url ./$export_dir/O*.jwt
+	RUN for a in ./$export_dir/A*.jwt ; do nsc import account --file $a ; done
+	RUN for u in ./$export_dir/U*.jwt ; do nsc import user --file $u ; done
+	RUN nsc import keys --dir ./$export_dir
+
+	RUN --interactive /bin/sh --login
+
+import-ubuntu:
+	FROM $ubuntu
+	ARG export_dir = exports
+	WORKDIR /work
+	COPY +test-base/nsc /usr/local/bin
+	COPY --dir +test-export-keys-and-jwts/$export_dir .
+	RUN nsc add operator --url ./$export_dir/O*.jwt
+	RUN for a in ./$export_dir/A*.jwt ; do nsc import account --file $a ; done
+	RUN for u in ./$export_dir/U*.jwt ; do nsc import user --file $u ; done
+	RUN nsc import keys --dir ./$export_dir
+
+	RUN --interactive /bin/bash --login
+
+test-docker-compose:
+	FROM $dind
+	WORKDIR /work
+	COPY . .
+
+	WITH DOCKER --compose docker-compose.yaml --allow-privileged
+	     RUN docker compose exec box nats server info --server nats --creds sys.creds
+	END
+
+# test runs all unit tests
+test:
+	BUILD +test-create-operator
+	BUILD +test-create-operator-with-system-account-and-user
+	BUILD +test-create-operator-with-signing-key
+	BUILD +test-create-operator-and-require-signing-keys
+	BUILD +test-create-operator-with-jwt-server-url
+	BUILD +test-create-operator-with-preferred-settings
+
+	BUILD +test-create-account
+	BUILD +test-create-account-from-signing-key
+	BUILD +test-create-account-from-signing-key-with-operator-tags
+	BUILD +test-create-account-with-limits
+
+	BUILD +test-create-user
+	BUILD +test-create-user-from-signing-key
+	BUILD +test-create-user-from-signing-key-with-limits
+	#BUILD +test-create-user-from-signing-key-with-limits-integration
+
+	BUILD +test-export-keys
+	BUILD +test-export-keys-and-jwts

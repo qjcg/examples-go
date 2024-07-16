@@ -33,7 +33,7 @@ func RunEmbeddedServer(inProcess bool) (*nats.Conn, *server.Server, error) {
 		clientOpts = append(clientOpts, nats.InProcessServer(ns))
 	}
 
-	nc, err := nats.Connect(nats.DefaultURL, clientOpts...)
+	nc, err := nats.Connect("", clientOpts...)
 	if err != nil {
 		return nil, nil, err
 	}
