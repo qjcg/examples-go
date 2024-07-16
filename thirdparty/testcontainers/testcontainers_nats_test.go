@@ -1,6 +1,6 @@
 //go:build integration
 
-package nats
+package testcontainers
 
 import (
 	"bytes"
