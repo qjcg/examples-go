@@ -1,0 +1,132 @@
+VERSION 0.8
+
+CREATE_OPERATOR:
+	FUNCTION
+	ARG name = foocorp
+	ARG url = nats://127.0.0.1:4222
+	ARG tags = status:awesome,region:us-east
+
+	RUN nsc create operator $name \
+	    --generate-signing-key \
+	    --sys
+	RUN nsc edit operator \
+	    --account-jwt-server-url $url \
+	    --require-signing-keys \
+	    --tag $tags
+
+CREATE_ACCOUNT:
+	FUNCTION
+	ARG operator = foocorp
+	ARG account = team_alfa
+
+	LET operator_sk = $(nsc describe operator $operator --json | jq -r '.nats.signing_keys[0]')
+	RUN nsc create account $account -K $operator_sk
+
+CREATE_ACCOUNT_SK:
+	FUNCTION
+	ARG account = team_alfa
+	ARG sk_args = --role chat_user --allow-pub "chat.post.{{tag(org)}}.{{name()}}" --allow-sub "chat.post.{{tag(org)}}.*" --allow-pub-response
+
+	RUN nsc edit account -n $account --sk generate
+	LET sk = $(nsc describe account $account --json | jq -r '.nats.signing_keys[0]')
+	RUN nsc edit signing-key --sk $sk $sk_args
+
+EDIT_ACCOUNT:
+	FUNCTION
+	ARG account = team_alfa
+	ARG args = --description 'The dev. team at FooCorp' --info-url 'https://foocorp.com/$account'
+
+	# FIXME: can't pass args as $args, though explicitly passing them below works.
+	RUN nsc edit account $account --description 'The dev. team at FooCorp' --info-url 'https://foocorp.com/$account'
+
+GENERATE_CREDS:
+	FUNCTION
+	ARG account = SYS
+	ARG user = sys
+
+	RUN nsc generate creds --account $account --name $user --output-file $user.creds
+	SAVE ARTIFACT $user.creds
+
+GENERATE_CONFIG:
+	FUNCTION
+	ARG filename = resolver.conf
+
+	RUN nsc generate config --nats-resolver --config-file $filename
+	SAVE ARTIFACT $filename
+
+# list lists all operators and keys for a given operator.
+LIST:
+	FUNCTION
+
+	RUN nsc list operators
+	RUN nsc list keys --all
+
+EXPORT:
+	FUNCTION
+	ARG dir = exports
+
+	RUN nsc export keys --all --dir $dir --include-jwts
+	SAVE ARTIFACT $dir
+
+IMPORT:
+	FUNCTION
+	ARG dir = imports
+
+	COPY --dir $dir .
+	RUN nsc add operator --url ./$dir/O*.jwt
+	RUN for a in ./$dir/A*.jwt ; do nsc import account --file $a ; done
+	RUN for u in ./$dir/U*.jwt ; do nsc import user --file $u ; done
+	RUN nsc import keys --dir $dir
+
+REPORT:
+	FUNCTION
+
+	LET out = report.md
+
+	RUN echo 'nsc list keys --all' >> $out
+	RUN nsc list keys --all >> $out 2>&1
+	RUN echo 'nsc describe operator' >> $out
+	RUN nsc describe operator >> $out 2>&1
+	RUN echo 'nsc describe account --name SYS' >> $out
+	RUN nsc describe account --name SYS >> $out 2>&1
+
+	SAVE ARTIFACT $out
+
+TEST_SCOPED_SIGNING_KEY:
+	FUNCTION
+
+	ARG OPERATOR = foocorp
+	ARG ACCOUNT = devteam
+	ARG USER1 = bob
+	ARG USER2 = alice
+
+	# Create a new Operator and Account.
+	DO +CREATE_OPERATOR --NAME=$OPERATOR
+	DO +CREATE_ACCOUNT --NAME=$ACCOUNT
+
+	# Add a signing key to the Account.
+	RUN nsc edit account -n $ACCOUNT --sk generate
+	LET sk1 = $(nsc describe account -n $ACCOUNT -J | jq -r '.nats.signing_keys[0]')
+
+	# Give the signing key a role name and set some permissions on it.
+	RUN nsc edit signing-key \
+	    	--sk $sk1 \
+		--role chat_user \
+	    	--allow-pub "chat.post.{{tag(org)}}.{{name()}}" \
+	        --allow-sub "chat.post.{{tag(org)}}.*" \
+		--allow-pub-response
+
+	# Create Users using the signing key.
+	DO +CREATE_USER --NAME=$USER1 --KEY=$sk1
+	DO +CREATE_USER --NAME=$USER2 --KEY=$sk1
+
+	# Read permissions set on a User.
+	RUN nsc describe user $USER1
+
+	# Update permissions on a signing key.
+	# After pushing this key to nats-server, permissions will be updated for all Users signed with this key.
+	# No need to distribute any new keys to Users!
+	RUN nsc edit signing-key \
+	    --sk $sk1 \
+	    --allow-pub "chat.dm.{{tag(org)}}.{{name()}}.*" \
+	    --allow-sub "chat.dm.{{tag(org)}}.*.{{name()}}"
