@@ -22,7 +22,7 @@ test-base:
 	WORKDIR /work
 	SAVE ARTIFACT /go/bin/*
 
-# TODO: Create `testdata-keys` target that provides
+# Creates the following under the `testdata` folder:
 #   - 1x operator with preferred settings
 #   - 1x system account and user
 #   - 2x accounts with preferred settings
@@ -116,11 +116,11 @@ testdata:
         LET a1u = ""
         LET a2u = ""
         FOR i IN 1 2 3
-          SET a1u = $(eval "echo $a1_user${i}")
+          SET a1u = $(eval "echo \$a1_user${i}")
           RUN nsc create user $a1u --account $account1 --private-key $account1_sk
           RUN nsc generate creds -a $account1 -n $a1u -o ${account1}_${a1u}.creds
 
-          SET a2u = $(eval "echo $a2_user${i}")
+          SET a2u = $(eval "echo \$a2_user${i}")
           RUN nsc create user $a2u --account $account2 --private-key $account2_sk
           RUN nsc generate creds -a $account2 -n $a2u -o ${account2}_${a2u}.creds
         END
@@ -129,7 +129,7 @@ testdata:
 	RUN nsc export keys --all --dir exports --include-jwts
 
 	SAVE ARTIFACT exports AS LOCAL testdata/exports
-	SAVE ARTIFACT *.creds AS LOCAL testdata/creds/
+	SAVE ARTIFACT *.creds AS LOCAL testdata/user_creds/
 	SAVE ARTIFACT resolver.conf AS LOCAL testdata/resolver.conf
 
 dev:
