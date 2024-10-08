@@ -4,6 +4,7 @@ package playwright
 
 import (
 	"fmt"
+	"log"
 	"net/url"
 	"testing"
 
@@ -12,6 +13,13 @@ import (
 )
 
 type Browser int
+
+func init() {
+	err := playwright.Install()
+	if err != nil {
+		log.Fatalf("Error installing playwright: %v", err)
+	}
+}
 
 const (
 	Chromium Browser = iota

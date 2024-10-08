@@ -9,7 +9,7 @@ import (
 	"github.com/go-task/task/v3/taskfile/ast"
 )
 
-func TestTarget(t *testing.T) {
+func TestRunTargetFromTaskfile(t *testing.T) {
 	var buf bytes.Buffer
 
 	e := task.Executor{
@@ -24,7 +24,41 @@ func TestTarget(t *testing.T) {
 		t.Fatalf("error calling Setup: %v", err)
 	}
 
-	err = e.Run(context.Background(), &ast.Call{Task: "greet"})
+	err = e.Run(context.Background(), &ast.Call{
+		Task: "greet",
+	})
+	if err != nil {
+		t.Fatalf("error calling Run: %v", err)
+	}
+
+	want := "Hello Taskfile\n"
+	got := buf.String()
+	if got != want {
+		t.Fatalf("wanted %v, got %v", want, got)
+	}
+}
+
+func RunTargetFromAST(t *testing.T) {
+	var buf bytes.Buffer
+
+	taskfile := ast.Taskfile{
+	}
+
+	e := task.Executor{
+		Taskfile: &taskfile,
+		Stdout: &buf,
+		Stderr: &buf,
+		Silent: true,
+	}
+
+	err := e.Setup()
+	if err != nil {
+		t.Fatalf("error calling Setup: %v", err)
+	}
+
+	err = e.Run(context.Background(), &ast.Call{
+		Task: "greet",
+	})
 	if err != nil {
 		t.Fatalf("error calling Run: %v", err)
 	}
