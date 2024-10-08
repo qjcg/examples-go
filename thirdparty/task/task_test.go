@@ -3,7 +3,6 @@ package task
 import (
 	"bytes"
 	"context"
-	"path/filepath"
 	"testing"
 
 	"github.com/go-task/task/v3"
@@ -12,19 +11,15 @@ import (
 
 func TestTarget(t *testing.T) {
 	var buf bytes.Buffer
-	taskFilePath, err := filepath.Abs("testdata/Taskfile.yml")
-	if err != nil {
-		t.Fatal(err)
-	}
 
 	e := task.Executor{
-		Dir:        "testdata",
-		Entrypoint: taskFilePath,
+		Dir:    "testdata",
 		Stdout: &buf,
 		Stderr: &buf,
+		Silent: true,
 	}
 
-	err = e.Setup()
+	err := e.Setup()
 	if err != nil {
 		t.Fatalf("error calling Setup: %v", err)
 	}
@@ -34,5 +29,10 @@ func TestTarget(t *testing.T) {
 		t.Fatalf("error calling Run: %v", err)
 	}
 
-	t.Log(buf.String())
+	want := "Hello Taskfile\n"
+	got := buf.String()
+
+	if got != want {
+		t.Fatalf("wanted %v, got %v", want, got)
+	}
 }
