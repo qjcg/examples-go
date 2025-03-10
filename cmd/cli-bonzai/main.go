@@ -4,44 +4,31 @@ import (
 	"fmt"
 	"os"
 
-	Z "github.com/rwxrob/bonzai/z"
-	"github.com/rwxrob/help"
+	"github.com/rwxrob/bonzai"
+	"github.com/rwxrob/bonzai/cmds/help"
 )
 
-var cmdRoot = &Z.Cmd{
+var cmdRoot = &bonzai.Cmd{
 	Name:        "example",
-	Summary:     "An example command with Bonzai",
+	Short:     "An example command with Bonzai",
 	Usage:       "[-h|--help|help]",
-	License:     "GPL-3.0",
-	Description: "",
-	Dynamic:     map[string]any{},
-	Source:      "https://github.com/qjcg/examples-go",
-	Issues:      "https://github.com/qjcg/examples-go/issues",
-	Commands: []*Z.Cmd{
+	Long: "",
+	Cmds: []*bonzai.Cmd{
 		help.Cmd,
 	},
-	Params:  []string{},
-	Hidden:  []string{},
-	VarDefs: map[string]string{},
 	Comp:    nil,
-	Call: func(cmd *Z.Cmd, _ ...string) error {
+	Do: func(cmd *bonzai.Cmd, _ ...string) error {
 		fmt.Printf("executing command: %s\n", cmd.Name)
 
 		return nil
 	},
-	Init: func(caller *Z.Cmd, _ ...string) error {
+	Init: func(caller *bonzai.Cmd, _ ...string) error {
 		return nil
 	},
-	Input:    nil,
 	MinArgs:  0,
 	MaxArgs:  0,
 	NumArgs:  0,
 	NoArgs:   false,
-	MinParm:  0,
-	MaxParm:  0,
-	UseConf:  false,
-	UseVars:  false,
-	ConfVars: false,
 }
 
 func Main() int {

@@ -5,22 +5,22 @@ import (
 	"fmt"
 	"testing"
 
-	Z "github.com/rwxrob/bonzai/z"
+	"github.com/rwxrob/bonzai"
 )
 
 func TestCommand(t *testing.T) {
 	var buf bytes.Buffer
 	want := "foo stuff"
 
-	testCommand := &Z.Cmd{
+	testCommand := &bonzai.Cmd{
 		Name: "foo",
-		Call: func(_ *Z.Cmd, _ ...string) error { // note conventional _
-			fmt.Fprintf(&buf, want)
+		Do: func(_ *bonzai.Cmd, _ ...string) error { // note conventional _
+			fmt.Fprintf(&buf, "%s", want)
 			return nil
 		},
 	}
 
-	if err := testCommand.Call(nil); err != nil {
+	if err := testCommand.Do(nil); err != nil {
 		t.Fatalf("failed to call command: %v", err)
 	}
 

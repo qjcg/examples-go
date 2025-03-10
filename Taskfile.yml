@@ -2,14 +2,12 @@
 
 version: '3'
 
-vars:
-  V_PKGSITE: latest
-  V_UNCOVER: v0.0.1
-  V_GOTESTSUM: v1.12.0
+setopt: [globstar]
 
+vars:
   COVERPROFILE: c.out
 
-  GOCMD_TEST: go run gotest.tools/gotestsum@{{.V_GOTESTSUM}} -- ./...
+  GOCMD_TEST: go tool gotestsum -- ./...
   GOCMD_TEST_INTEGRATION: '{{.GOCMD_TEST}} -tags integration'
   GOCMD_TEST_NOCACHE: '{{.GOCMD_TEST}} -count 1'
   GOCMD_TEST_INTEGRATION_NOCACHE: '{{.GOCMD_TEST}} -tags integration -count 1'
@@ -38,7 +36,7 @@ tasks:
     deps:
       - test:coverprofile
     cmds:
-      - go run rsc.io/uncover@{{.V_UNCOVER}} {{.COVERPROFILE}}
+      - go tool uncover {{.COVERPROFILE}}
 
   install: go install ./cmd/...
 
@@ -46,6 +44,6 @@ tasks:
     - go get -u ./...
     - go mod tidy
 
-  docs: go run golang.org/x/pkgsite/cmd/pkgsite@{{.V_PKGSITE}}
+  docs: go tool pkgsite
 
   clean: rm -f {{.COVERPROFILE}}

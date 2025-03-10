@@ -19,7 +19,7 @@ func TestCommand(t *testing.T) {
                 love by spf13 and friends in Go.
                 Complete documentation is available at https://gohugo.io/documentation/`,
 		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Fprintf(&buf, want)
+			fmt.Fprintf(&buf, "%s", want)
 		},
 	}
 
