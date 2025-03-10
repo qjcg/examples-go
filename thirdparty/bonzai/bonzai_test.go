@@ -20,7 +20,7 @@ func TestCommand(t *testing.T) {
 		},
 	}
 
-	if err := testCommand.Do(nil); err != nil {
+	if err := testCommand.Run(); err != nil {
 		t.Fatalf("failed to call command: %v", err)
 	}
 
