@@ -8,7 +8,7 @@ import (
 
 // FIXME
 func TestMain(m *testing.M) {
-	testscript.Main(m, map[string]func() {
+	testscript.Main(m, map[string]func(){
 		"example": Main,
 	})
 }

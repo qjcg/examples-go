@@ -12,11 +12,11 @@ import (
 var cmdRoot = &bonzai.Cmd{
 	Name:  "example",
 	Alias: "ex|eg",
-	Vers: "0.1.0",
+	Vers:  "0.1.0",
 	Usage: "[-h|--help|help]",
 	Short: "an example command with Bonzai",
 	Long:  "",
-	Comp: comp.Cmds,
+	Comp:  comp.Cmds,
 	Cmds: []*bonzai.Cmd{
 		help.Cmd,
 		vars.Cmd,
