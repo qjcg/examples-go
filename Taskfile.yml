@@ -40,11 +40,17 @@ tasks:
     cmds:
       - go tool uncover {{.COVERPROFILE}}
 
-  lint: go tool golangci-lint run
-  lint:editorconfig: go tool editorconfig-check
+  lint:
+    cmds:
+      - task: lint:golangci
+      - task: lint:editorconfig
+
+  lint:golangci: go tool golangci-lint run
+  lint:editorconfig: go tool editorconfig-checker
+
   vuln: go tool govulncheck ./...
 
-  build: go tool goreleaser build --auto-snapshot --clean
+  build: go tool goreleaser build --auto-snapshot --clean --skip validate
 
   install: go install ./cmd/...
 
@@ -54,4 +60,4 @@ tasks:
 
   docs: go tool pkgsite
 
-  clean: rm -f {{.COVERPROFILE}}
+  clean: rm -rf {{.COVERPROFILE}} ./dist
