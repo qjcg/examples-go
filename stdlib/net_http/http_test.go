@@ -7,21 +7,23 @@ import (
 	"testing"
 )
 
-func TestMethodPatterns(t *testing.T) {
+func TestMethodPatterns_GET(t *testing.T) {
+	wantedGetOutput := "Successful GET!"
+
 	mux := http.NewServeMux()
 
-	indexHandler := func(w http.ResponseWriter, req *http.Request) {
-		io.WriteString(w, "all good!")
+	indexGetHandler := func(w http.ResponseWriter, req *http.Request) {
+		io.WriteString(w, wantedGetOutput)
 	}
 
-	mux.Handle("GET /", indexHandler)
+	mux.HandleFunc("GET /", indexGetHandler)
 
 	req := httptest.NewRequest("GET", "/", nil)
 	w := httptest.NewRecorder()
 	mux.ServeHTTP(w, req)
 
 	resp := w.Result()
-	body, err := io.ReadAll(resp.Body)
+	_, err := io.ReadAll(resp.Body)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -32,7 +34,7 @@ func TestMethodPatterns(t *testing.T) {
 	}
 
 	// Check the response body
-	if w.Body.String() != "all good!" {
-		t.Errorf("Expected response body 'all good!' but got '%s'", w.Body.String())
+	if w.Body.String() != wantedGetOutput {
+		t.Errorf("Expected response body '%s' but got '%s'", wantedGetOutput, w.Body.String())
 	}
 }
