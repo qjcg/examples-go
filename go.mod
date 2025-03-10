@@ -34,6 +34,7 @@ require (
 	github.com/testcontainers/testcontainers-go/modules/nats v0.32.0
 	golang.org/x/text v0.23.0
 	modernc.org/sqlite v1.36.0
+	rsc.io/script v0.0.2
 )
 
 require (

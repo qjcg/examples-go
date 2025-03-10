@@ -1811,6 +1811,8 @@ mvdan.cc/unparam v0.0.0-20240528143540-8a5130ca722f h1:lMpcwN6GxNbWtbpI1+xzFLSW8
 mvdan.cc/unparam v0.0.0-20240528143540-8a5130ca722f/go.mod h1:RSLa7mKKCNeTTMHBw5Hsy2rfJmd6O2ivt9Dw9ZqCQpQ=
 rsc.io/markdown v0.0.0-20231214224604-88bb533a6020 h1:GqQcl3Kno/rOntek8/d8axYjau8r/c1zVFojXS6WJFI=
 rsc.io/markdown v0.0.0-20231214224604-88bb533a6020/go.mod h1:8xcPgWmwlZONN1D9bjxtHEjrUtSEa3fakVF8iaewYKQ=
+rsc.io/script v0.0.2 h1:eYoG7A3GFC3z1pRx3A2+s/vZ9LA8cxojHyCvslnj4RI=
+rsc.io/script v0.0.2/go.mod h1:cKBjCtFBBeZ0cbYFRXkRoxP+xGqhArPa9t3VWhtXfzU=
 rsc.io/uncover v0.0.2 h1:7anlALtBEFwvUWBBRozrEc5Yr+M929gRLsEbRT1S86o=
 rsc.io/uncover v0.0.2/go.mod h1:k7n+WMJNnpUNlhNSIwNfi8O5WK4kF9oqZpFuyOP1IFQ=
 sigs.k8s.io/kind v0.24.0 h1:g4y4eu0qa+SCeKESLpESgMmVFBebL0BDa6f777OIWrg=

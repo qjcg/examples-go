@@ -1,0 +1,3 @@
+# echo succeeds
+echo hello
+stdout 'hello'
