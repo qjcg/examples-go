@@ -7,13 +7,14 @@ setopt: [globstar]
 vars:
   COVERPROFILE: c.out
 
-  GOCMD_TEST: go tool gotestsum -- ./...
+  GOCMD_TEST: go tool gotestsum ./...
   GOCMD_TEST_INTEGRATION: '{{.GOCMD_TEST}} -tags integration'
   GOCMD_TEST_NOCACHE: '{{.GOCMD_TEST}} -count 1'
   GOCMD_TEST_INTEGRATION_NOCACHE: '{{.GOCMD_TEST}} -tags integration -count 1'
 
 tasks:
   default:
+    - task: vuln
     - task: test:unit
 
   test:
