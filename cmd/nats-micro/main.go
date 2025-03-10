@@ -11,7 +11,10 @@ import (
 )
 
 func echoHandler(req micro.Request) {
-	req.Respond(req.Data())
+	err := req.Respond(req.Data())
+	if err != nil {
+		log.Println(err)
+	}
 }
 
 func main() {

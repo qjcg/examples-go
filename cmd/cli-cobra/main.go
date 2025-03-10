@@ -1,7 +1,7 @@
 package main
 
 import (
-	"os"
+	"log"
 
 	"github.com/spf13/cobra"
 )
@@ -11,11 +11,13 @@ var rootCmd = &cobra.Command{
 	Short: "A demo application using cobra",
 }
 
-func Main() int {
-	rootCmd.Execute()
-	return 0
+func Main() {
+	err := rootCmd.Execute()
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func main() {
-	os.Exit(Main())
+	Main()
 }

@@ -13,7 +13,10 @@ func TestMethodPatterns_GET(t *testing.T) {
 	mux := http.NewServeMux()
 
 	indexGetHandler := func(w http.ResponseWriter, req *http.Request) {
-		io.WriteString(w, wantedGetOutput)
+		_, err := io.WriteString(w, wantedGetOutput)
+		if err != nil {
+			t.Fatalf("error writing index content: %v", err)
+		}
 	}
 
 	mux.HandleFunc("GET /", indexGetHandler)

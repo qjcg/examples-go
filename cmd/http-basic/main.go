@@ -43,6 +43,9 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 	err := json.NewEncoder(w).Encode(&data)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("ERROR\n"))
+		_, err := w.Write([]byte("ERROR\n"))
+		if err != nil {
+			log.Printf("error writing response: %v", err)
+		}
 	}
 }

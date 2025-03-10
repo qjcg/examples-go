@@ -20,7 +20,10 @@ func (s *OrderService) AddItem(items ...entities.Item) {
 		Items: items,
 	}
 
-	s.Store.Save(order)
+	err := s.Store.Save(order)
+	if err != nil {
+		log.Fatalf("error saving order: %v", err)
+	}
 }
 
 func (s *OrderService) Total() float64 {

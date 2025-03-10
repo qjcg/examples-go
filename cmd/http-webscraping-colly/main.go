@@ -4,6 +4,7 @@ package main
 import (
 	"fmt"
 	"io"
+	"log"
 	"os"
 	"regexp"
 	"sync"
@@ -44,14 +45,20 @@ func main() {
 	go func() {
 		c := colly.NewCollector()
 		c = PrintThumbnailURLs(c, os.Stdout)
-		c.Visit(urls["reddit"])
+		err := c.Visit(urls["reddit"])
+		if err != nil {
+			log.Fatal(err)
+		}
 		wg.Done()
 	}()
 
 	go func() {
 		cMetalSucks := colly.NewCollector()
 		cMetalSucks = PrintMetalSucksTitles(cMetalSucks, os.Stdout)
-		cMetalSucks.Visit(urls["metalsucks"])
+		err := cMetalSucks.Visit(urls["metalsucks"])
+		if err != nil {
+			log.Fatal(err)
+		}
 		wg.Done()
 	}()
 

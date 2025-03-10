@@ -56,7 +56,10 @@ func TestMicro_AddService(t *testing.T) {
 	defer ns.Shutdown()
 
 	echoHandler := func(req micro.Request) {
-		req.Respond(req.Data())
+		err := req.Respond(req.Data())
+		if err != nil {
+			t.Fatalf("error sending echo response: %v", err)
+		}
 	}
 
 	config := micro.Config{
@@ -88,6 +91,9 @@ func TestMicro_AddService(t *testing.T) {
 			t.Fatalf("failed to subscribe: %v", err)
 		}
 	})
+	if err != nil {
+		t.Fatalf("failed to subscribe: %v", err)
+	}
 
 	if err := nc.Publish(testSubject, []byte(want)); err != nil {
 		t.Fatalf("failed to publish to NATS: %v", err)

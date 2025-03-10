@@ -19,8 +19,16 @@ func NewViper() *viper.Viper {
 
 	// Environment variables.
 	v.SetEnvPrefix("demo") // DEMO_
-	v.BindEnv("server")    // DEMO_SERVER
-	v.BindEnv("port")      // DEMO_PORT
+
+	err := v.BindEnv("server") // DEMO_SERVER
+	if err != nil {
+		log.Fatalf("failed to bind DEMO_SERVER env var: %v", err)
+	}
+	err = v.BindEnv("port") // DEMO_PORT
+	if err != nil {
+		log.Fatalf("failed to bind DEMO_PORT env var: %v", err)
+	}
+
 	v.SetDefault("server", "demo.example.com")
 	v.SetDefault("port", 8080)
 

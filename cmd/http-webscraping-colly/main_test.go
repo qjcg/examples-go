@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	_ "embed"
+	"log"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -17,7 +18,10 @@ func newUnstartedTestServer() *httptest.Server {
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write(testHTMLPage)
+		_, err := w.Write(testHTMLPage)
+		if err != nil {
+			log.Fatalf("error writing testHTMLPage: %v", err)
+		}
 	})
 
 	return httptest.NewUnstartedServer(mux)

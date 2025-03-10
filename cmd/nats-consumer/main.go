@@ -4,6 +4,7 @@ package main
 import (
 	"context"
 	"flag"
+	"log"
 	"log/slog"
 	"os"
 	"runtime"
@@ -57,7 +58,10 @@ func main() {
 
 	cc, err := cons.Consume(func(msg jetstream.Msg) {
 		slog.Info("Received jetstream message", "msg", string(msg.Data()))
-		msg.Ack()
+		err := msg.Ack()
+		if err != nil {
+			log.Fatalf("error ACKing message: %v", err)
+		}
 	}, jetstream.ConsumeErrHandler(func(consumeCtx jetstream.ConsumeContext, err error) {
 		slog.Error(err.Error())
 	}))
@@ -68,5 +72,5 @@ func main() {
 	defer cc.Stop()
 	slog.Info("Message handling callback registered")
 
-	runtime.Goexit()
+	defer runtime.Goexit()
 }

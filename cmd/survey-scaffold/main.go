@@ -68,8 +68,7 @@ func main() {
 	}
 
 	for _, tt := range conf.TemplateType {
-		switch tt {
-		case "service":
+		if tt == "service" {
 			var service Service
 			err = survey.Ask(questions["service"], &service)
 			if err != nil {

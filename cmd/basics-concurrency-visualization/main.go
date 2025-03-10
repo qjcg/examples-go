@@ -19,30 +19,31 @@ var (
 	magenta = lipgloss.NewStyle().Foreground(lipgloss.Color(ansiMagenta))
 )
 
-type Counter struct {
-	w      io.Writer // TODO: Consider chan(int) instead?
-	Start  int
-	End    int
-	Symbol string
-	Style  lipgloss.Style
-}
+// TODO: Decide whether to use this.
+// type Counter struct {
+// 	w      io.Writer // TODO: Consider chan(int) instead?
+// 	Start  int
+// 	End    int
+// 	Symbol string
+// 	Style  lipgloss.Style
+// }
 
-func NewCounter() *Counter {
-	return &Counter{}
-}
+// func NewCounter() *Counter {
+// 	return &Counter{}
+// }
 
-func (c *Counter) Count() {
-	switch {
-	case c.Start > c.End:
-		for i := c.Start; i >= c.End; i-- {
-		}
-	case c.Start < c.End:
-		for i := c.Start; i <= c.End; i++ {
-		}
-	case c.Start == c.End:
-		return
-	}
-}
+// func (c *Counter) Count() {
+// 	switch {
+// 	case c.Start > c.End:
+// 		for i := c.Start; i >= c.End; i-- {
+// 		}
+// 	case c.Start < c.End:
+// 		for i := c.Start; i <= c.End; i++ {
+// 		}
+// 	case c.Start == c.End:
+// 		return
+// 	}
+// }
 
 // Up prints all numbers from 0-100, counting Up.
 func Up(w io.Writer) {

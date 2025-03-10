@@ -19,9 +19,12 @@ func TestFlagSet_Parse(t *testing.T) {
 	fset.UintVar(&conf.Number, "n", 42, "number of items")
 
 	// Parse arguments that override the default.
-	fset.Parse([]string{
+	err := fset.Parse([]string{
 		"-f", want,
 	})
+	if err != nil {
+		t.Fatalf("error parsing flags: %v", err)
+	}
 
 	got := conf.Format
 	if got != want {

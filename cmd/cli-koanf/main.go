@@ -22,7 +22,7 @@ func NewKoanfFromEnvironment() (*koanf.Koanf, error) {
 
 	if err := k.Load(env.Provider("DEMO_", ".", func(s string) string {
 		envVar := strings.ToLower(strings.TrimPrefix(s, "DEMO_"))
-		return strings.Replace(envVar, "_", ".", -1)
+		return strings.ReplaceAll(envVar, "_", ".")
 	}), nil); err != nil {
 		return k, err
 	}

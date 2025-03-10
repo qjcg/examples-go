@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/jmoiron/sqlx"
@@ -45,7 +46,10 @@ func main() {
 		}
 
 		w.Header().Set("Content-type", "application/json")
-		json.NewEncoder(w).Encode(&visits)
+		err := json.NewEncoder(w).Encode(&visits)
+		if err != nil {
+			log.Fatalf("error encoding visits: %v", err)
+		}
 	})
 
 	fmt.Println("Listening on http://0.0.0.0:9999")

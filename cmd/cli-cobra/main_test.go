@@ -1,16 +1,15 @@
 package main
 
 import (
-	"os"
 	"testing"
 
 	"github.com/rogpeppe/go-internal/testscript"
 )
 
 func TestMain(m *testing.M) {
-	os.Exit(testscript.RunMain(m, map[string]func() int{
+	testscript.Main(m, map[string]func(){
 		"cobrademo": Main,
-	}))
+	})
 }
 
 func TestBasicsGreeter(t *testing.T) {
