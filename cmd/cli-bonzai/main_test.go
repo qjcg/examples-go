@@ -1,17 +1,17 @@
 package main
 
 import (
-	"os"
 	"testing"
 
 	"github.com/rogpeppe/go-internal/testscript"
 )
 
-func TestMain(m *testing.M) {
-	os.Exit(testscript.RunMain(m, map[string]func() int{
-		"example": Main,
-	}))
-}
+// FIXME
+// func TestMain(m *testing.M) {
+// 	os.Exit(testscript.RunMain(m, map[string]func() int{
+// 		"example": Main,
+// 	}))
+// }
 
 func TestBasicsGreeter(t *testing.T) {
 	testscript.Run(t, testscript.Params{

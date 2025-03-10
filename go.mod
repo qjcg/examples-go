@@ -26,6 +26,8 @@ require (
 	github.com/rogpeppe/go-internal v1.14.1
 	github.com/rwxrob/bonzai v0.56.6
 	github.com/rwxrob/bonzai/cmds/help v0.8.2
+	github.com/rwxrob/bonzai/comp v0.10.0
+	github.com/rwxrob/bonzai/vars v0.12.0
 	github.com/spf13/cobra v1.9.1
 	github.com/spf13/viper v1.19.0
 	github.com/testcontainers/testcontainers-go v0.32.0
@@ -449,6 +451,7 @@ require (
 	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/rwxrob/bonzai/ds v0.1.1 // indirect
+	github.com/rwxrob/bonzai/edit v0.1.1 // indirect
 	github.com/rwxrob/bonzai/fn v0.9.0 // indirect
 	github.com/rwxrob/bonzai/futil v0.4.0 // indirect
 	github.com/rwxrob/bonzai/is v0.3.0 // indirect
@@ -456,6 +459,7 @@ require (
 	github.com/rwxrob/bonzai/mark/funcs v0.8.6 // indirect
 	github.com/rwxrob/bonzai/run v0.7.0 // indirect
 	github.com/rwxrob/bonzai/scanner v0.1.0 // indirect
+	github.com/rwxrob/bonzai/term v0.2.1 // indirect
 	github.com/rwxrob/bonzai/to v0.6.1 // indirect
 	github.com/rwxrob/bonzai/uniq v0.1.0 // indirect
 	github.com/ryancurrah/gomodguard v1.3.5 // indirect
