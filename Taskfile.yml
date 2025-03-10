@@ -38,6 +38,8 @@ tasks:
     cmds:
       - go tool uncover {{.COVERPROFILE}}
 
+  vuln: go tool govulncheck ./...
+
   install: go install ./cmd/...
 
   update-deps:
