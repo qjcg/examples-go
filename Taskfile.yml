@@ -14,8 +14,9 @@ vars:
 
 tasks:
   default:
-    - task: vuln
     - task: test:unit
+    - task: vuln
+    - task: lint
 
   test:
     - task: test:unit
@@ -39,6 +40,7 @@ tasks:
     cmds:
       - go tool uncover {{.COVERPROFILE}}
 
+  lint: go tool golangci-lint run
   vuln: go tool govulncheck ./...
 
   install: go install ./cmd/...
