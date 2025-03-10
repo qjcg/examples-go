@@ -2,4 +2,4 @@
 
 package generate
 
-const generatedAnswer = 38
+const generatedAnswer = 42

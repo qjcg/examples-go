@@ -4,8 +4,8 @@ import "fmt"
 
 //go:generate go run generate_script.go
 
-func ExampleGoGenerate() {
+func Example_goGenerate() {
 	fmt.Println(generatedAnswer)
 
-	// Output: 38
+	// Output: 42
 }

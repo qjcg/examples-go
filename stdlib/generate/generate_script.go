@@ -1,10 +1,9 @@
 //go:build ignore
 
-package generate
+package main
 
 import (
 	"log"
-	"math/rand/v2"
 	"os"
 	"text/template"
 )
@@ -17,17 +16,13 @@ package generate
 const generatedAnswer = {{.Answer}}
 `
 
-	// Random source is seeded with static values, so will always
-	// produce the same results. This is what we want for testing.
-	r := rand.New(rand.NewPCG(1, 2))
-
 	tmpl, err := template.New("main").Parse(dataTemplate)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	data := struct{ Answer int }{
-		Answer: r.IntN(50),
+		Answer: 42,
 	}
 
 	f, err := os.Create("generate_data.go")
