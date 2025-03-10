@@ -36,6 +36,10 @@ var cmdRoot = &bonzai.Cmd{
 	NoArgs:  false,
 }
 
-func main() {
+func Main() {
 	cmdRoot.Exec()
+}
+
+func main() {
+	Main()
 }

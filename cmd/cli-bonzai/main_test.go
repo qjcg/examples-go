@@ -7,11 +7,11 @@ import (
 )
 
 // FIXME
-// func TestMain(m *testing.M) {
-// 	os.Exit(testscript.RunMain(m, map[string]func() int{
-// 		"example": Main,
-// 	}))
-// }
+func TestMain(m *testing.M) {
+	testscript.Main(m, map[string]func() {
+		"example": Main,
+	})
+}
 
 func TestBasicsGreeter(t *testing.T) {
 	testscript.Run(t, testscript.Params{

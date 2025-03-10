@@ -6,10 +6,10 @@ stdout 'executing command: example\n'
 
 # help
 exec example -h
-stdout 'SYNOPSIS'
+stdout 'NAME'
 
 exec example --help
-stdout 'SYNOPSIS'
+stdout 'NAME'
 
 exec example help
-stdout 'SYNOPSIS'
+stdout 'NAME'
