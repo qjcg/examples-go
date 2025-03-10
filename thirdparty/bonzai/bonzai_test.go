@@ -8,7 +8,7 @@ import (
 	"github.com/rwxrob/bonzai"
 )
 
-func TestCommand(t *testing.T) {
+func TestRun(t *testing.T) {
 	var buf bytes.Buffer
 	want := "foo stuff"
 
