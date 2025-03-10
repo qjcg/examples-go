@@ -50,7 +50,8 @@ tasks:
 
   vuln: go tool govulncheck ./...
 
-  build: go tool goreleaser build --auto-snapshot --clean --skip validate
+  build:snapshot: go tool goreleaser build --snapshot --clean
+  release:snapshot: go tool goreleaser release --snapshot --clean
 
   install: go install ./cmd/...
 
