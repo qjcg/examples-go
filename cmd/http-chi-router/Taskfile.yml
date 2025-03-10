@@ -1,0 +1,13 @@
+# https://taskfile.dev
+
+version: '3'
+
+vars:
+  BIN: gtg-http-chi-router
+  CONTAINER: gossetx/gtg-http-chi-router
+
+tasks:
+  default: [{task: build}]
+  build: CGO_ENABLED=0 go build -ldflags '-s -w' -o {{.BIN}}
+  image: docker build -t {{.CONTAINER}} .
+  clean: rm -f {{.BIN}}
