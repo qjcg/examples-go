@@ -19,7 +19,7 @@ func ExampleFile() {
 	// Output: 1
 }
 
-func ExampleWithReader() {
+func Example_newPipeWithReader() {
 	r := strings.NewReader(`first line
 second line
 third line
