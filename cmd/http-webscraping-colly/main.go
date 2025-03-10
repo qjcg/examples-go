@@ -11,12 +11,10 @@ import (
 	"github.com/gocolly/colly/v2"
 )
 
-var (
-	urls = map[string]string{
-		"reddit":     `https://old.reddit.com/r/ThingsCutInHalfPorn/`,
-		"metalsucks": `https://www.metalsucks.net/`,
-	}
-)
+var urls = map[string]string{
+	"reddit":     `https://old.reddit.com/r/ThingsCutInHalfPorn/`,
+	"metalsucks": `https://www.metalsucks.net/`,
+}
 
 var REImgurURL *regexp.Regexp = regexp.MustCompile("i.imgur.com")
 

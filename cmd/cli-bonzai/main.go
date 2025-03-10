@@ -9,14 +9,14 @@ import (
 )
 
 var cmdRoot = &bonzai.Cmd{
-	Name:        "example",
-	Short:     "An example command with Bonzai",
-	Usage:       "[-h|--help|help]",
-	Long: "",
+	Name:  "example",
+	Short: "An example command with Bonzai",
+	Usage: "[-h|--help|help]",
+	Long:  "",
 	Cmds: []*bonzai.Cmd{
 		help.Cmd,
 	},
-	Comp:    nil,
+	Comp: nil,
 	Do: func(cmd *bonzai.Cmd, _ ...string) error {
 		fmt.Printf("executing command: %s\n", cmd.Name)
 
@@ -25,10 +25,10 @@ var cmdRoot = &bonzai.Cmd{
 	Init: func(caller *bonzai.Cmd, _ ...string) error {
 		return nil
 	},
-	MinArgs:  0,
-	MaxArgs:  0,
-	NumArgs:  0,
-	NoArgs:   false,
+	MinArgs: 0,
+	MaxArgs: 0,
+	NumArgs: 0,
+	NoArgs:  false,
 }
 
 func Main() int {

@@ -41,14 +41,13 @@ func TestRunTargetFromTaskfile(t *testing.T) {
 func RunTargetFromAST(t *testing.T) {
 	var buf bytes.Buffer
 
-	taskfile := ast.Taskfile{
-	}
+	taskfile := ast.Taskfile{}
 
 	e := task.Executor{
 		Taskfile: &taskfile,
-		Stdout: &buf,
-		Stderr: &buf,
-		Silent: true,
+		Stdout:   &buf,
+		Stderr:   &buf,
+		Silent:   true,
 	}
 
 	err := e.Setup()

@@ -6,15 +6,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var (
-	cmdServe = &cobra.Command{
-		Use:   "serve",
-		Short: "Serve our web application",
-		Run: func(cmd *cobra.Command, args []string) {
-			Serve(port)
-		},
-	}
-)
+var cmdServe = &cobra.Command{
+	Use:   "serve",
+	Short: "Serve our web application",
+	Run: func(cmd *cobra.Command, args []string) {
+		Serve(port)
+	},
+}
 
 // Flag vars.
 var (

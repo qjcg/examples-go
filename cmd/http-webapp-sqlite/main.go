@@ -24,7 +24,6 @@ const schema = `
 `
 
 func main() {
-
 	dbFile := flag.String("f", "example.db?_journal_mode=wal", "sqlite DB file")
 	flag.Parse()
 
@@ -36,7 +35,6 @@ func main() {
 
 	var visits Visits
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-
 		if _, err := db.Exec(`UPDATE visits SET count = count + 1;`); err != nil {
 			http.Error(w, "unable to UPDATE sqlite visits table", http.StatusInternalServerError)
 			return

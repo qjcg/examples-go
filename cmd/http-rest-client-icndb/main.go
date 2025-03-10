@@ -21,7 +21,6 @@ type APIResp struct {
 }
 
 func main() {
-
 	// Accept a CLI flag specifying the number of jokes to print.
 	nJokes := flag.Int("n", 1, "number of random jokes to retreive")
 	flag.Parse()
