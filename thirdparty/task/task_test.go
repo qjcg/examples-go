@@ -24,7 +24,7 @@ func TestRunTargetFromTaskfile(t *testing.T) {
 		t.Fatalf("error calling Setup: %v", err)
 	}
 
-	err = e.Run(context.Background(), &ast.Call{
+	err = e.Run(context.Background(), &task.Call{
 		Task: "greet",
 	})
 	if err != nil {
@@ -56,7 +56,7 @@ func RunTargetFromAST(t *testing.T) {
 		t.Fatalf("error calling Setup: %v", err)
 	}
 
-	err = e.Run(context.Background(), &ast.Call{
+	err = e.Run(context.Background(), &task.Call{
 		Task: "greet",
 	})
 	if err != nil {
