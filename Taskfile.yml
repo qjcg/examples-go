@@ -43,6 +43,8 @@ tasks:
   lint: go tool golangci-lint run
   vuln: go tool govulncheck ./...
 
+  build: go tool goreleaser build --auto-snapshot --clean
+
   install: go install ./cmd/...
 
   update-deps:

@@ -7,3 +7,5 @@ c.out
 .task
 thirdparty/playwright/*.png
 .task
+
+dist/
