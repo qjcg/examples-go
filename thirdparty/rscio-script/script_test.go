@@ -12,5 +12,10 @@ func Test_scripttest(t *testing.T) {
 	ctx := context.Background()
 	engine := script.NewEngine()
 
-	scripttest.Test(t, ctx, engine, []string{}, "testdata/*.txtar")
+	scripttest.Test(
+		t, ctx, engine,
+		[]string{
+			"PATH=/usr/bin",
+		},
+		"testdata/*.txtar")
 }
