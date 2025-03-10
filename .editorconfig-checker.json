@@ -1,0 +1,3 @@
+{
+  "Exclude": [".git", "LICENSE", ".dir-locals.el"]
+}

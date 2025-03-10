@@ -41,6 +41,7 @@ tasks:
       - go tool uncover {{.COVERPROFILE}}
 
   lint: go tool golangci-lint run
+  lint:editorconfig: go tool editorconfig-check
   vuln: go tool govulncheck ./...
 
   build: go tool goreleaser build --auto-snapshot --clean
