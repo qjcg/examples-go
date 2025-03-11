@@ -448,6 +448,7 @@ require (
 	github.com/quasilyte/stdinfo v0.0.0-20220114132959-f7386bf02567 // indirect
 	github.com/radovskyb/watcher v1.0.7 // indirect
 	github.com/raeperd/recvcheck v0.2.0 // indirect
+	github.com/rakyll/hey v0.1.4 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
@@ -605,6 +606,7 @@ tool (
 	github.com/golangci/golangci-lint/cmd/golangci-lint
 	github.com/goreleaser/chglog/cmd/chglog
 	github.com/goreleaser/goreleaser/v2
+	github.com/rakyll/hey
 	golang.org/x/pkgsite/cmd/pkgsite
 	golang.org/x/vuln/cmd/govulncheck
 	gotest.tools/gotestsum

@@ -1,0 +1,21 @@
+# https://taskfile.dev
+
+version: '3'
+
+vars:
+  BIN: gtg-example
+
+tasks:
+  default: [{task: build}]
+
+  build:
+    status:
+      - test -x {{.BIN}}
+    cmds:
+      - go build -o {{.BIN}}
+    env:
+      CGO_ENABLED: 0
+
+  clean: rm -f {{.BIN}}
+
+  test: go tool hey -c 200 -n 1000 http://localhost:9999/
