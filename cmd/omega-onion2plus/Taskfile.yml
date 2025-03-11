@@ -1,0 +1,30 @@
+# https://taskfile.dev
+
+version: '3'
+
+vars:
+  BIN: omega-onion2plus
+
+  SSH_USER: root
+  SSH_HOST: omega-7961
+  SSH_TARGET: "{{.SSH_USER}}@{{.SSH_HOST}}"
+  SSH_OPTS: '-o "PubkeyAcceptedAlgorithms +ssh-rsa" -o "HostkeyAlgorithms +ssh-rsa"'
+  SSH_CMD: ssh {{.SSH_OPTS}} {{.SSH_TARGET}}
+
+tasks:
+  default: [{task: build}]
+
+  build:
+    status:
+      -  test -x {{.BIN}}
+    cmds:
+      - go build -ldflags '-s -w'
+    env:
+      CGO_ENABLED: 0
+      GOOS: linux
+      GOARCH: mipsle
+      GOMIPS: softfloat
+
+  scp: scp {{.SSH_OPTS}} {{.BIN}} {{.SSH_TARGET}}:/tmp/
+  ssh: "{{.SSH_CMD}}"
+  clean: rm -f {{.BIN}}
