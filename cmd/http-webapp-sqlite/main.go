@@ -19,8 +19,7 @@ type Visits struct {
 
 const schema = `
 	CREATE TABLE IF NOT EXISTS visits (
-		id INTEGER PRIMARY KEY,
-		count INTEGER NOT NULL
+		count INTEGER PRIMARY KEY
 	);
 `
 
@@ -29,26 +28,38 @@ func main() {
 	flag.Parse()
 
 	db := sqlx.MustConnect("sqlite", *dbFile)
-	defer db.Close()
+	defer func() {
+		err := db.Close()
+		if err != nil {
+			log.Fatalf("error closing db: %v", err)
+		}
+	}()
 
 	db.MustExec(schema)
-	db.MustExec(`INSERT OR IGNORE INTO visits VALUES (1, 0);`) // Seed row.
+	db.MustExec(`INSERT OR IGNORE INTO visits VALUES (0);`) // Seed row if necessary.
 
 	var visits Visits
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		if _, err := db.Exec(`UPDATE visits SET count = count + 1;`); err != nil {
-			http.Error(w, "unable to UPDATE sqlite visits table", http.StatusInternalServerError)
+		_, err := db.Exec(`UPDATE visits SET count = count + 1;`)
+		if err != nil {
+			msg := fmt.Sprintf("unable to UPDATE count in sqlite visits table: %v", err)
+			http.Error(w, msg, http.StatusInternalServerError)
 			return
 		}
-		if err := db.Get(&visits, `SELECT count FROM visits;`); err != nil {
-			http.Error(w, "unable to SELECT from sqlite visits table", http.StatusInternalServerError)
+
+		err = db.Get(&visits, `SELECT count FROM visits;`)
+		if err != nil {
+			msg := fmt.Sprintf("unable to SELECT from visits table: %v", err)
+			http.Error(w, msg, http.StatusInternalServerError)
 			return
 		}
 
 		w.Header().Set("Content-type", "application/json")
-		err := json.NewEncoder(w).Encode(&visits)
+		err = json.NewEncoder(w).Encode(&visits)
 		if err != nil {
-			log.Fatalf("error encoding visits: %v", err)
+			msg := fmt.Sprintf("error encoding visits: %v", err)
+			http.Error(w, msg, http.StatusInternalServerError)
+			return
 		}
 	})
 

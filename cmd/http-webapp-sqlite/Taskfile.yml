@@ -3,14 +3,17 @@
 version: '3'
 
 vars:
-  BIN: gtg-example
+  BIN:
+    sh: basename $PWD
 
 tasks:
   default: [{task: build}]
 
   build:
-    status:
-      - test -x {{.BIN}}
+    sources:
+      - main.go
+    generates:
+      - "{{.BIN}}"
     cmds:
       - go build -o {{.BIN}}
     env:
@@ -18,4 +21,5 @@ tasks:
 
   clean: rm -f {{.BIN}}
 
-  test: go tool hey -c 200 -n 1000 http://localhost:9999/
+  test:hey: go tool hey -c 1 -n 100 http://localhost:9999/
+  test:cassowary: go tool cassowary run -c 1 -n 100 -u http://localhost:9999/
