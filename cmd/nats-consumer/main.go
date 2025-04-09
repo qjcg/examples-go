@@ -45,7 +45,7 @@ func main() {
 	stream, err := js.Stream(ctx, *flagStream)
 	if err != nil {
 		slog.Error(err.Error())
-		os.Exit(1)
+		os.Exit(1) //nolint:gocritic
 	}
 	slog.Info("Got JetStream handle", "stream", *flagStream)
 

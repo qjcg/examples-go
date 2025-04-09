@@ -27,17 +27,17 @@ func main() {
 
 	// Make an API request.
 	url := fmt.Sprintf(URLTemplate, *nJokes)
-	resp, err := http.Get(url)
+	resp, err := http.Get(url) //nolint:noctx
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer resp.Body.Close()
+	defer resp.Body.Close() //nolint:gocritic
 
 	// Decode the JSON API response into an APIResp struct.
 	var ar APIResp
 	err = json.NewDecoder(resp.Body).Decode(&ar)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal(err) //nolint:gocritic
 	}
 
 	// Print the jokes from our API response.
