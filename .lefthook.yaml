@@ -10,3 +10,6 @@ pre-commit:
 
     govulncheck:
       run: go tool govulncheck
+
+    editorconfig-checker:
+      run: go tool editorconfig-checker
