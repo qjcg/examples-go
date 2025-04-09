@@ -4,3 +4,9 @@ pre-commit:
       run: go tool gofumpt -w {staged_files}
       glob: "*.go"
       stage_fixed: true
+
+    lint:
+      run: go tool golangci-lint run
+
+    govulncheck:
+      run: go tool govulncheck
