@@ -616,6 +616,7 @@ require (
 tool (
 	github.com/caarlos0/svu/v3
 	github.com/editorconfig-checker/editorconfig-checker/v3/cmd/editorconfig-checker
+	github.com/evilmartians/lefthook
 	github.com/go-task/task/v3/cmd/task
 	github.com/golangci/golangci-lint/cmd/golangci-lint
 	github.com/goreleaser/chglog/cmd/chglog

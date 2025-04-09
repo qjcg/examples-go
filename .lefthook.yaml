@@ -1,0 +1,6 @@
+pre-commit:
+  commands:
+    gofumpt:
+      run: go tool gofumpt -w {staged_files}
+      glob: "*.go"
+      stage_fixed: true
