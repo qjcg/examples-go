@@ -26,4 +26,6 @@ tasks:
       - go tool hey -c 10 -n 1000 -m POST http://localhost:9999/
       - go tool hey -c 10 -n 10000 -m GET http://localhost:9999/
 
-  test:cassowary: go tool cassowary run -c 1 -n 100 -u http://localhost:9999/
+  test:cassowary:
+      - go tool cassowary run -c 10 -n 1000 -u http://localhost:9999/ --postfile <(echo test)
+      - go tool cassowary run -c 10 -n 10000 -u http://localhost:9999/
