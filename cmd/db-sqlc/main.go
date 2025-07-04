@@ -10,7 +10,8 @@ import (
 
 	_ "embed"
 
-	_ "modernc.org/sqlite"
+	_ "github.com/ncruces/go-sqlite3/driver"
+	_ "github.com/ncruces/go-sqlite3/embed"
 )
 
 //go:embed schema.sql
@@ -19,7 +20,7 @@ var ddl string
 func run() error {
 	ctx := context.Background()
 
-	db, err := sql.Open("sqlite", "example.sqlite")
+	db, err := sql.Open("sqlite3", "file:example.sqlite")
 	if err != nil {
 		return err
 	}
