@@ -52,7 +52,7 @@ func main() {
 
 	var visits Visits
 	http.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
-		err := db.QueryRowContext(ctx, `SELECT count FROM visits;`).Scan(&visits.Count)
+		err := db.QueryRowContext(ctx, `SELECT id,count FROM visits;`).Scan(&visits.ID, &visits.Count)
 		if err != nil {
 			msg := fmt.Sprintf("unable to SELECT from visits table: %v", err)
 			http.Error(w, msg, http.StatusInternalServerError)
@@ -69,7 +69,7 @@ func main() {
 	})
 
 	http.HandleFunc("POST /", func(w http.ResponseWriter, r *http.Request) {
-		_, err := db.ExecContext(ctx, `UPDATE visits SET count = count + 1 WHERE ID = 1;`)
+		_, err := db.ExecContext(ctx, `UPDATE visits SET count = count + 1 WHERE id = 1;`)
 		if err != nil {
 			msg := fmt.Sprintf("unable to UPDATE count in sqlite visits table: %v", err)
 			http.Error(w, msg, http.StatusInternalServerError)
