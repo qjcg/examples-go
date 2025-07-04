@@ -15,11 +15,15 @@ tasks:
     generates:
       - "{{.BIN}}"
     cmds:
-      - go build -o {{.BIN}}
+      - go build -ldflags '-s -w' -o {{.BIN}}
     env:
       CGO_ENABLED: 0
 
   clean: rm -f {{.BIN}}
 
-  test:hey: go tool hey -c 1 -n 100 http://localhost:9999/
+  test:hey:
+    cmds:
+      - go tool hey -c 10 -n 1000 -m POST http://localhost:9999/
+      - go tool hey -c 10 -n 10000 -m GET http://localhost:9999/
+
   test:cassowary: go tool cassowary run -c 1 -n 100 -u http://localhost:9999/

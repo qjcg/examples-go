@@ -2,24 +2,28 @@
 package main
 
 import (
+	"context"
+	"database/sql"
 	"encoding/json"
 	"flag"
 	"fmt"
 	"log"
 	"net/http"
 
-	"github.com/jmoiron/sqlx"
-	_ "modernc.org/sqlite"
+	_ "github.com/ncruces/go-sqlite3/driver"
+	_ "github.com/ncruces/go-sqlite3/embed"
 )
 
 // Visits represents the number of visits to an HTTP endpoint.
 type Visits struct {
-	Count int `json:"count"`
+	ID int
+	Count int
 }
 
 const schema = `
 	CREATE TABLE IF NOT EXISTS visits (
-		count INTEGER PRIMARY KEY
+		id INTEGER PRIMARY KEY,
+		count INTEGER
 	);
 `
 
@@ -27,27 +31,28 @@ func main() {
 	dbFile := flag.String("f", "example.db?_journal_mode=wal", "sqlite DB file")
 	flag.Parse()
 
-	db := sqlx.MustConnect("sqlite", *dbFile)
+	db, err := sql.Open("sqlite3", "file:" + *dbFile)
+	if err != nil {
+		log.Fatal(err)
+	}
 	defer func() {
-		err := db.Close()
-		if err != nil {
+		if err := db.Close(); err != nil {
 			log.Fatalf("error closing db: %v", err)
 		}
 	}()
 
-	db.MustExec(schema)
-	db.MustExec(`INSERT OR IGNORE INTO visits VALUES (0);`) // Seed row if necessary.
+	ctx := context.Background()
+	if _, err := db.ExecContext(ctx, schema); err != nil {
+		log.Fatal(err)
+	}
+
+	if _, err := db.ExecContext(ctx, `INSERT OR IGNORE INTO visits VALUES (1, 0);`); err != nil {
+		log.Fatal(err)
+	}
 
 	var visits Visits
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		_, err := db.Exec(`UPDATE visits SET count = count + 1;`)
-		if err != nil {
-			msg := fmt.Sprintf("unable to UPDATE count in sqlite visits table: %v", err)
-			http.Error(w, msg, http.StatusInternalServerError)
-			return
-		}
-
-		err = db.Get(&visits, `SELECT count FROM visits;`)
+	http.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
+		err := db.QueryRowContext(ctx, `SELECT count FROM visits;`).Scan(&visits.Count)
 		if err != nil {
 			msg := fmt.Sprintf("unable to SELECT from visits table: %v", err)
 			http.Error(w, msg, http.StatusInternalServerError)
@@ -58,6 +63,15 @@ func main() {
 		err = json.NewEncoder(w).Encode(&visits)
 		if err != nil {
 			msg := fmt.Sprintf("error encoding visits: %v", err)
+			http.Error(w, msg, http.StatusInternalServerError)
+			return
+		}
+	})
+
+	http.HandleFunc("POST /", func(w http.ResponseWriter, r *http.Request) {
+		_, err := db.ExecContext(ctx, `UPDATE visits SET count = count + 1 WHERE ID = 1;`)
+		if err != nil {
+			msg := fmt.Sprintf("unable to UPDATE count in sqlite visits table: %v", err)
 			http.Error(w, msg, http.StatusInternalServerError)
 			return
 		}
