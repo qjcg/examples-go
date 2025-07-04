@@ -16,7 +16,6 @@ import (
 
 // Visits represents the number of visits to an HTTP endpoint.
 type Visits struct {
-	ID int `json:"id"`
 	Count int `json:"count"`
 }
 
@@ -52,7 +51,7 @@ func main() {
 
 	var visits Visits
 	http.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
-		err := db.QueryRowContext(ctx, `SELECT id,count FROM visits;`).Scan(&visits.ID, &visits.Count)
+		err := db.QueryRowContext(ctx, `SELECT count FROM visits;`).Scan(&visits.Count)
 		if err != nil {
 			msg := fmt.Sprintf("unable to SELECT from visits table: %v", err)
 			http.Error(w, msg, http.StatusInternalServerError)
@@ -78,5 +77,5 @@ func main() {
 	})
 
 	fmt.Println("Listening on http://0.0.0.0:9999")
-	panic(http.ListenAndServe(":9999", nil))
+	log.Fatal(http.ListenAndServe(":9999", nil))
 }
