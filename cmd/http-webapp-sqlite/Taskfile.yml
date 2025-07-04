@@ -16,6 +16,7 @@ tasks:
       - "{{.BIN}}"
     cmds:
       - go build -ldflags '-s -w' -o {{.BIN}}
+      - command -v upx >/dev/null && upx {{.BIN}} || echo upx not found, skipping
     env:
       CGO_ENABLED: 0
 
