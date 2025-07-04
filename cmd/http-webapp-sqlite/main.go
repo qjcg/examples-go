@@ -16,8 +16,8 @@ import (
 
 // Visits represents the number of visits to an HTTP endpoint.
 type Visits struct {
-	ID int
-	Count int
+	ID int `json:"id"`
+	Count int `json:"count"`
 }
 
 const schema = `
