@@ -1,0 +1,18 @@
+version: 3
+
+vars:
+  MIGRATE_VERSION: v4.18.3
+  BIN: go run -tags sqlite github.com/golang-migrate/migrate/v4/cmd/migrate@{{.MIGRATE_VERSION}}
+  DB_FILE: example.db
+  MIGRATIONS_DIR: migrations
+  BASE_ARGS: -database sqlite://{{.DB_FILE}}
+  CREATE_ARGS: -dir {{.MIGRATIONS_DIR}} -ext sql
+
+tasks:
+  default:
+    deps: [up]
+
+  up:   '{{.BIN}} {{.BASE_ARGS}} -path migrations up'
+  down: '{{.BIN}} {{.BASE_ARGS}} -path migrations down'
+
+  clean: rm -rf {{.DB_FILE}}

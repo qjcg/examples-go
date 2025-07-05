@@ -1,0 +1,28 @@
+env GOMODCACHE=/tmp/rscio-script/gomodcache
+env GOCACHE=/tmp/rscio-script/gocache
+env GOPATH=/tmp/rscio-script/go
+
+# runs with sqlite driver via go run
+exec /bin/sh -c 'go run -tags sqlite github.com/golang-migrate/migrate/v4/cmd/migrate@v4.18.3 || echo continuing tests despite non-zero exit code'
+stderr 'Usage: migrate'
+stderr 'Database drivers: .*sqlite.*'
+
+# initializes new up and down migration files
+exec go run -tags sqlite github.com/golang-migrate/migrate/v4/cmd/migrate@v4.18.3 -database sqlite://test-init.db create -ext sql -dir migrations-init -seq create_users
+exists migrations-init/000001_create_users.down.sql
+exists migrations-init/000001_create_users.up.sql
+
+# runs up migration
+exec go run -tags sqlite github.com/golang-migrate/migrate/v4/cmd/migrate@v4.18.3 -database sqlite://test.db -path migrations up
+exists test.db
+
+# runs down migration
+
+
+-- migrations/20250705151350_create_users.down.sql --
+DROP TABLE IF EXISTS users;
+-- migrations/20250705151350_create_users.up.sql --
+CREATE TABLE IF NOT EXISTS users (
+  id INTEGER PRIMARY KEY,
+  username TEXT
+) STRICT;
