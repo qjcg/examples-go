@@ -5,6 +5,4 @@ sql:
     queries: query.sql
     gen:
       go:
-        package: tutorial
-        out: tutorial
-
+        out: db

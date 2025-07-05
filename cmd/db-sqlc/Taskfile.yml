@@ -1,0 +1,36 @@
+# https://taskfile.dev
+
+version: '3'
+
+vars:
+  BIN: db-sqlc
+  DB: example.db
+  SQLC_GENERATED: db
+
+tasks:
+  default:
+    deps: [build]
+
+  build:
+    sources:
+      - '*.go'
+    generates:
+      - "{{.BIN}}"
+    cmds:
+      - task: build:sqlc
+      - CGO_ENABLED=0 go build -ldflags '-s -w' -o {{.BIN}}
+      - task: build:upx
+
+  build:sqlc:
+    sources:
+      - sqlc.yaml
+      - queries.sql
+      - schema.sql
+    generates:
+      - '{{.SQLC_GENERATED}}/*.go'
+    cmds:
+      - go tool sqlc generate
+
+  build:upx: command -v upx >/dev/null && upx {{.BIN}}
+
+  clean: rm -rf {{.BIN}} {{.SQLC_GENERATED}} {{.DB}}
