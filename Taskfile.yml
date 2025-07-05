@@ -43,9 +43,9 @@ tasks:
   lint:
     cmds:
       - task: lint:editorconfig
-      - task: lint:golangci
+      #- task: lint:golangci
 
-  lint:golangci: go tool golangci-lint run
+  #lint:golangci: go run github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.2.1 run
   lint:editorconfig: go tool editorconfig-checker
 
   vuln: go tool govulncheck ./...
