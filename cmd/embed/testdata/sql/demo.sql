@@ -1,4 +1,1 @@
-CREATE TABLE demo (
-	id int primary key
-	user text
-);
+DROP TABLE IF EXISTS users;

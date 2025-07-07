@@ -14,6 +14,12 @@ type Config struct {
 	Port   uint
 }
 
+type App struct {
+	v *viper.Viper
+
+	config Config
+}
+
 func NewViper() *viper.Viper {
 	v := viper.New()
 
@@ -37,42 +43,39 @@ func NewViper() *viper.Viper {
 	// See precedence order: https://github.com/spf13/viper#why-viper
 	v.SetConfigName("config")
 	v.AddConfigPath(".")
-	v.AddConfigPath("/tmp")
 
 	return v
 }
 
 func main() {
-	v := NewViper()
+	app := App{v: NewViper()}
 
-	if err := v.ReadInConfig(); err != nil {
+	if err := app.v.ReadInConfig(); err != nil {
 		log.Println(err)
 	}
 
-	var conf Config
-	if err := v.Unmarshal(&conf); err != nil {
+	if err := app.v.Unmarshal(&app.config); err != nil {
 		log.Println(err)
 	}
 
-	// Print initial app settings.
-	printConf(v)
+	app.logConfig()
 
-	// Watch config file and run callback function on changes.
-	v.WatchConfig()
-	v.OnConfigChange(func(e fsnotify.Event) {
-		if e.Op == fsnotify.Write {
-			printConf(v)
-		}
-	})
+	app.watchConfigAndLogChanges()
 
 	// Wait forever (exit with Ctrl-C).
 	runtime.Goexit()
 }
 
-func printConf(v *viper.Viper) {
-	log.Printf(
-		"server: %s, port: %d\n",
-		v.GetString("server"),
-		v.GetInt("port"),
-	)
+func (app *App) logConfig() {
+	log.Printf("server: %s, port: %d\n", app.v.GetString("server"), app.v.GetInt("port"))
+}
+
+// Watch config file and run callback function on changes.
+func (app *App) watchConfigAndLogChanges() {
+	app.v.WatchConfig()
+	app.v.OnConfigChange(func(e fsnotify.Event) {
+		if e.Op == fsnotify.Write {
+			app.logConfig()
+		}
+	})
 }
