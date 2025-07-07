@@ -6,7 +6,6 @@ import (
 	"testing"
 )
 
-
 func TestApp(t *testing.T) {
 	db, err := sql.Open("sqlite3", ":memory:")
 	if err != nil {

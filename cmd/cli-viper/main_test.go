@@ -31,7 +31,7 @@ func TestApp_logConfig(t *testing.T) {
 		v: &viper.Viper{},
 		config: Config{
 			Server: "demo.example.com",
-			Port: uint(8080),
+			Port:   uint(8080),
 		},
 	}
 

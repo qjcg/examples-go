@@ -34,7 +34,7 @@ func main() {
 	dbFile := flag.String("f", "example.db?_journal_mode=wal", "sqlite DB file")
 	flag.Parse()
 
-	db, err := sql.Open("sqlite3", "file:" + *dbFile)
+	db, err := sql.Open("sqlite3", "file:"+*dbFile)
 	if err != nil {
 		log.Fatal(err)
 	}

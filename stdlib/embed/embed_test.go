@@ -58,5 +58,4 @@ func Test_embedFS(t *testing.T) {
 			t.Fatalf("want: %s, got: %s", want, got)
 		}
 	})
-
 }
